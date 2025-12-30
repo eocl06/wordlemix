@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <title>Wordle Mix</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Reset & Temel --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Patrick Hand', cursive; /* El yazısı stili */
+            background-color: #f0f2f5;
+            color: #000;
+            height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Ana Kutu (Phone Container) --- */
+        #app {
+            width: 100%;
+            max-width: 400px; /* Görseldeki dar yapı */
+            height: 100%;
+            max-height: 850px;
+            background: #fff; /* Görseldeki gradient için aşağıya bak */
+            background: linear-gradient(180deg, #ffffff 0%, #f4f6fa 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Mobilde tam ekran olsun */
+        @media (max-width: 420px) {
+            #app { max-height: 100%; border-radius: 0; }
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 22px;
+            font-weight: 700; /* Bold görünüm */
+            letter-spacing: -0.5px;
+            color: #000;
+            text-decoration: none;
+        }
+        
+        /* Görseldeki Yeşil Kare Logo */
+        .brand-icon {
+            display: flex;
+            gap: 2px;
+        }
+        .b-sq { width: 8px; height: 12px; background: #6aaa64; border-radius: 1px; }
+        .b-sq.light { opacity: 0.5; }
+
+        .share-link {
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .share-arrow { font-size: 18px; transform: rotate(-10deg); }
+
+        /* --- İçerik --- */
+        main {
+            flex: 1;
+            padding: 10px 30px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Her şeyi ortala */
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .highlight-red {
+            color: #d32f2f; /* Görseldeki kırmızı 'sen' */
+        }
+
+        p.desc {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        /* --- Form Alanları --- */
+        form { width: 100%; }
+
+        .input-group {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        /* Yuvarlak Inputlar (Pill Shape) */
+        .pill-input {
+            width: 100%;
+            height: 50px;
+            border: 1.5px solid #888; /* Görseldeki ince gri/siyah border */
+            border-radius: 25px; /* Tam yuvarlak köşeler */
+            padding: 0 20px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 18px;
+            outline: none;
+            background: #fff;
+            color: #000;
+            transition: border-color 0.2s;
+        }
+        .pill-input:focus { border-color: #000; border-width: 2px; }
+        .pill-input::placeholder { color: #aaa; }
+        .pill-input.error { border-color: #d32f2f; background: #fff0f0; }
+
+        /* Kelimen Label */
+        .word-label {
+            display: block;
+            text-align: left;
+            width: 100%;
+            font-weight: 700;
+            font-size: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+
+        /* --- Wordle Grid --- */
+        .word-grid {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .letter-box {
+            width: 55px;
+            height: 55px;
+            border: 1.5px solid #666;
+            border-radius: 10px; /* Görseldeki hafif yumuşak köşe */
+            font-family: 'Patrick Hand', cursive;
+            font-size: 32px;
+            text-align: center;
+            text-transform: uppercase;
+            background: #fff;
+            color: #000;
+            outline: none;
+            /* 3D efekti için */
+            transition: transform 0.6s, background-color 0.6s, border-color 0.6s;
+            transform-style: preserve-3d;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .letter-box:focus { border-color: #000; border-width: 2px; }
+
+        /* Dönme Animasyonu Sınıfları */
+        .flip { animation: flipCard 0.6s forwards; }
+        @keyframes flipCard {
+            0% { transform: rotateX(0); background: #fff; }
+            49% { background: #fff; }
+            50% { transform: rotateX(90deg); background: #6aaa64; border-color: #6aaa64; }
+            100% { transform: rotateX(0); background: #6aaa64; border-color: #6aaa64; color: white; }
+        }
+
+        /* --- Gönder Butonu --- */
+        .btn-submit {
+            width: 200px;
+            height: 55px;
+            background-color: #6aaa64; /* Wordle Yeşili */
+            color: #fff;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 24px;
+            font-weight: 700;
+            border: none;
+            border-radius: 30px; /* Pill buton */
+            cursor: pointer;
+            box-shadow: 0 4px 0 #4e8549; /* Hafif 3D alt gölge */
+            transition: transform 0.1s, box-shadow 0.1s;
+            text-transform: uppercase;
+        }
+        
+        .btn-submit:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+        .btn-submit:disabled {
+            background-color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* --- Success Overlay --- */
+        #success-view {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            animation: fadeIn 0.3s;
+        }
+        .success-title { font-size: 40px; margin-bottom: 10px; color: #6aaa64; }
+        @keyframes fadeIn { from {opacity:0} to {opacity:1}}
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <a href="#" class="brand">
+            <div class="brand-icon">
+                <div class="b-sq light"></div>
+                <div class="b-sq"></div>
+            </div>
+            WORDLE Mix
+        </a>
+        <a href="#" class="share-link" id="shareBtn">
+            PAYLAŞ <span class="share-arrow">➜</span>
+        </a>
+    </header>
+
+    <main id="main-content">
+        <h1>Bu kez kelimelere <span class="highlight-red">sen</span><br>karar veriyorsun!</h1>
+        
+        <p class="desc">
+            Önerdiğin kelime, bu yıl Wordle Mix'te günün sorusu olabilir. Kelimeni bırak yüz binlerce kişi senin seçtiğini oynasın.
+        </p>
+
+        <form id="gameForm" autocomplete="off">
+            <div class="input-group">
+                <input type="text" id="nameInput" class="pill-input" placeholder="Ad" required>
+            </div>
+            <div class="input-group">
+                <input type="email" id="emailInput" class="pill-input" placeholder="E-mail" required>
+            </div>
+
+            <label class="word-label">KELİMEN:</label>
+
+            <div class="word-grid" id="wordGrid">
+                <input type="text" maxlength="1" class="letter-box" data-idx="0">
+                <input type="text" maxlength="1" class="letter-box" data-idx="1">
+                <input type="text" maxlength="1" class="letter-box" data-idx="2">
+                <input type="text" maxlength="1" class="letter-box" data-idx="3">
+                <input type="text" maxlength="1" class="letter-box" data-idx="4">
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">GÖNDER</button>
+        </form>
+    </main>
+
+    <div id="success-view">
+        <div class="success-title">Harikasın!</div>
+        <p style="font-size:20px;">Kelimen havuza eklendi.</p>
+        <br>
+        <button class="btn-submit" onclick="window.location.reload()">Yeni Ekle</button>
+    </div>
+
+</div>
+
+<script>
+    const form = document.getElementById('gameForm');
+    const boxes = document.querySelectorAll('.letter-box');
+    const submitBtn = document.getElementById('submitBtn');
+    const successView = document.getElementById('success-view');
+
+    // --- GRID INPUT YÖNETİMİ ---
+    boxes.forEach((box, index) => {
+        // Tıklayınca seç
+        box.addEventListener('focus', () => box.select());
+
+        // Yazınca
+        box.addEventListener('input', (e) => {
+            const val = e.target.value;
+            // Sadece harf (Türkçe dahil)
+            if (/^[a-zA-ZğüşıöçĞÜŞİÖÇ]$/.test(val)) {
+                e.target.value = val.toLocaleUpperCase('tr-TR');
+                if (index < 4) boxes[index + 1].focus();
+            } else {
+                e.target.value = '';
+            }
+        });
+
+        // Silince (Backspace)
+        box.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !box.value && index > 0) {
+                boxes[index - 1].focus();
+            }
+        });
+
+        // Yapıştır (Paste)
+        box.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text');
+            const cleanText = text.replace(/[^a-zA-ZğüşıöçĞÜŞİÖÇ]/g, '').toLocaleUpperCase('tr-TR').slice(0, 5);
+            
+            cleanText.split('').forEach((char, i) => {
+                if (boxes[i]) boxes[i].value = char;
+            });
+            if (boxes[cleanText.length]) boxes[cleanText.length].focus(); // Sonrakine odaklan
+            else if (boxes[4]) boxes[4].blur(); // Bittiyse çık
+        });
+    });
+
+    // --- FORM GÖNDERME ---
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // 1. Validasyon
+        const nameVal = document.getElementById('nameInput').value.trim();
+        const emailVal = document.getElementById('emailInput').value.trim();
+        const wordVal = Array.from(boxes).map(b => b.value).join('');
+
+        if (!nameVal || !emailVal) {
+            alert("Lütfen ad ve e-mail alanlarını doldur.");
+            return;
+        }
+
+        if (wordVal.length !== 5) {
+            alert("Lütfen 5 harfli kelimeyi tamamla.");
+            return;
+        }
+
+        // 2. Animasyon Başlasın
+        submitBtn.disabled = true;
+        submitBtn.innerText = "...";
+
+        // Kutuları sırayla döndür
+        boxes.forEach((box, i) => {
+            setTimeout(() => {
+                box.classList.add('flip');
+            }, i * 200);
+        });
+
+        // 3. Başarı Ekranı (Animasyon bitince)
+        setTimeout(() => {
+            successView.style.display = 'flex';
+            submitBtn.innerText = "GÖNDER";
+            submitBtn.disabled = false;
+        }, 1600);
+        
+        // Simüle edilen backend datası
+        console.log({ name: nameVal, email: emailVal, word: wordVal });
+    });
+
+    // Paylaş butonu
+    document.getElementById('shareBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if(navigator.share) navigator.share({title:'Wordle Mix', url:window.location.href});
+        else alert('Link kopyalandı!');
+    });
+</script>
+
+</body>
+</html>
