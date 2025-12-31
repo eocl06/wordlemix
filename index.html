@@ -13,139 +13,62 @@
         :root {
             --primary-purple: #807ae8;
             --wordle-green: #6AAA64;
+            --wordle-red: #e74c3c;
             --bg-gradient: linear-gradient(180deg, #FFFFFF 40%, #F2F7FF 100%);
             --space-unit: 8px;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: #F2F7FF;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        body {
-            font-family: 'Fuzzy Bubbles', cursive;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            display: flex;
-            justify-content: center;
-        }
+        html, body { height: 100%; margin: 0; padding: 0; background: #F2F7FF; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Fuzzy Bubbles', cursive; background: var(--bg-gradient); background-attachment: fixed; display: flex; justify-content: center; }
 
         .main-wrapper {
-            width: 100%;
-            max-width: 414px;
-            min-height: 100vh;
-            padding: calc(var(--space-unit) * 3) 24px;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
+            width: 100%; max-width: 414px; min-height: 100vh;
+            padding: calc(var(--space-unit) * 3) 20px;
+            display: flex; flex-direction: column; box-sizing: border-box;
         }
 
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: calc(var(--space-unit) * 4);
-        }
-        
-        .logo {
-            display: flex; align-items: center; gap: 8px;
-            font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 1.3rem;
-        }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: calc(var(--space-unit) * 4); }
+        .logo { display: flex; align-items: center; gap: 8px; font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 1.3rem; }
+        .share-btn { font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
 
-        .share-btn {
-            font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 5px; cursor: pointer;
-        }
-
-        h1 {
-            font-size: clamp(26px, 8vw, 32px);
-            font-weight: 700;
-            line-height: 1.15;
-            margin-bottom: calc(var(--space-unit) * 4);
-            color: #000;
-        }
-
+        h1 { font-size: clamp(24px, 7.5vw, 32px); font-weight: 700; line-height: 1.15; margin-bottom: calc(var(--space-unit) * 4); color: #000; }
         .highlight { color: var(--primary-purple); }
         .highlight-green { color: var(--wordle-green); }
 
-        /* Revize: Paragraflar daha büyük ve ferah */
-        .content-text {
-            font-size: 17.5px;
-            line-height: 1.7;
-            margin-bottom: calc(var(--space-unit) * 3);
-            color: #000;
-            font-weight: 700;
-        }
-
+        .content-text { font-size: 17.5px; line-height: 1.7; margin-bottom: calc(var(--space-unit) * 3); color: #000; font-weight: 700; }
         .form-start-spacer { margin-top: calc(var(--space-unit) * 4); }
 
-        .input-group { 
-            margin-bottom: calc(var(--space-unit) * 3); 
-            text-align: center;
-            width: 100%;
-        }
+        .input-group { margin-bottom: calc(var(--space-unit) * 3); text-align: center; width: 100%; }
         
         input.main-input {
-            width: 100%;
-            padding: 16px 20px;
-            border-radius: 50px;
-            border: 2px solid #000;
-            background: #fff;
-            font-family: 'Fuzzy Bubbles', cursive;
-            font-size: 17px;
-            outline: none;
-            box-sizing: border-box;
+            width: 100%; padding: 16px 20px; border-radius: 50px; border: 2px solid #000;
+            background: #fff; font-family: 'Fuzzy Bubbles', cursive; font-size: 17px; outline: none; box-sizing: border-box;
+            transition: border-color 0.3s, transform 0.2s;
         }
 
-        .helper-text {
-            font-family: 'Caveat', cursive; 
-            font-size: 17px;
-            color: #333;
-            margin-top: 10px;
-            display: block;
-            line-height: 1.2;
+        /* Hata Animasyonu */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
         }
+        .shake { animation: shake 0.4s ease-in-out; border-color: var(--wordle-red) !important; }
 
+        .helper-text { font-family: 'Caveat', cursive; font-size: 17px; color: #333; margin-top: 10px; display: block; }
         .bold-name { font-weight: 700; }
 
         .word-section { margin-top: calc(var(--space-unit) * 3); }
-        .word-label {
-            font-weight: 700; 
-            font-size: 1.3rem;
-            margin-bottom: calc(var(--space-unit) * 2.5); 
-            text-transform: uppercase;
-        }
+        .word-label { font-weight: 700; font-size: 1.3rem; margin-bottom: calc(var(--space-unit) * 2.5); text-transform: uppercase; }
 
-        /* Revize: Kutuların yassılaşmasını önleyen sabit yapılı flex */
-        .boxes { 
-            display: flex; 
-            gap: 10px; 
-            justify-content: center; 
-            margin-bottom: calc(var(--space-unit) * 4); 
-        }
+        .boxes { display: flex; gap: 2%; justify-content: space-between; margin-bottom: calc(var(--space-unit) * 4); width: 100%; }
 
         .letter-box {
-            width: 58px;
-            height: 58px;
-            flex-shrink: 0; /* Yassılaşmayı engeller */
-            border: 2px solid #000;
-            border-radius: 12px;
-            background: #fff;
-            font-family: 'Fuzzy Bubbles', cursive;
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            outline: none;
-            text-transform: uppercase;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
+            width: 18%; aspect-ratio: 1; flex-shrink: 0; border: 2px solid #000; border-radius: 10px;
+            background: #fff; font-family: 'Fuzzy Bubbles', cursive; font-size: clamp(20px, 6vw, 28px);
+            font-weight: 700; text-align: center; outline: none; text-transform: uppercase;
+            transition: all 0.6s; transform-style: preserve-3d; display: flex; align-items: center; justify-content: center;
         }
 
-        /* Revize: Kelime gönderilince yeşil olma animasyonu */
         @keyframes wordleFlip {
             0% { transform: rotateX(0); }
             45% { transform: rotateX(90deg); background: #fff; }
@@ -157,36 +80,35 @@
         .spacer { flex-grow: 1; min-height: 40px; }
 
         .submit-btn {
-            background-color: var(--wordle-green);
-            color: white;
-            border: 2px solid #000;
-            width: 100%;
-            padding: 18px;
-            border-radius: 50px;
-            font-family: 'DynaPuff', cursive;
-            font-size: 24px;
-            font-weight: 600;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-            margin-bottom: 30px; 
-            transition: all 0.3s;
+            background-color: var(--wordle-green); color: white; border: 2px solid #000; width: 100%;
+            padding: 18px; border-radius: 50px; font-family: 'DynaPuff', cursive; font-size: 24px;
+            font-weight: 600; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            margin-bottom: 30px; transition: all 0.1s;
         }
+        .submit-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
 
+        /* Yeni Tasarım Diliyle Popup */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); display: none; justify-content: center;
-            align-items: center; z-index: 1000; backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.7); display: none; justify-content: center;
+            align-items: center; z-index: 1000; backdrop-filter: blur(8px);
         }
         .modal-content {
-            background: #fff; width: 85%; max-width: 350px; padding: 40px 20px; 
-            border-radius: 24px; text-align: center; border: 3px solid #000;
+            background: #fff; width: 85%; max-width: 340px; padding: 40px 24px;
+            border-radius: 28px; text-align: center; border: 3px solid #000;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
-        .modal-title { font-family: 'DynaPuff', cursive; font-size: 2rem; color: var(--wordle-green); margin-bottom: 15px; }
+        .modal-title { 
+            font-family: 'DynaPuff', cursive; font-size: 2.2rem; 
+            color: var(--wordle-green); margin-bottom: 15px; 
+            letter-spacing: -1px;
+        }
+        .modal-text {
+            font-family: 'Fuzzy Bubbles', cursive; font-size: 1.1rem; 
+            font-weight: 700; color: #000; line-height: 1.5; margin-bottom: 25px;
+        }
 
-        .readonly-mode {
-            pointer-events: none;
-        }
+        .readonly-mode { pointer-events: none; opacity: 0.85; }
     </style>
 </head>
 <body>
@@ -220,7 +142,7 @@
 
         <div class="word-section">
             <div class="word-label">BENİM KELİMEM:</div>
-            <div class="boxes">
+            <div class="boxes" id="boxContainer">
                 <input type="text" class="letter-box" maxlength="1">
                 <input type="text" class="letter-box" maxlength="1">
                 <input type="text" class="letter-box" maxlength="1">
@@ -236,8 +158,8 @@
     <div class="modal-overlay" id="modal">
         <div class="modal-content">
             <div class="modal-title">HARİKA!</div>
-            <p style="font-weight:700; margin-bottom:20px;">Kelimeni önerdin. Zamanı geldiğinde sana haber vereceğiz!</p>
-            <button class="submit-btn" style="font-size:18px; padding:12px;" onclick="closeAndLock()">TAMAM</button>
+            <div class="modal-text">Kelimeni önerdin. Zamanı geldiğinde sana haber vereceğiz!</div>
+            <button class="submit-btn" style="font-size:1.1rem; padding:14px; width:80%;" onclick="closeAndLock()">TAMAM</button>
         </div>
     </div>
 
@@ -246,34 +168,56 @@
         const modal = document.getElementById('modal');
         const submitBtn = document.getElementById('submitBtn');
         const content = document.getElementById('pageContent');
+        const nameInput = document.getElementById('fullName');
+        const emailInput = document.getElementById('email');
 
         boxes.forEach((box, index) => {
             box.addEventListener('input', (e) => {
-                const val = e.target.value.toLocaleUpperCase('tr-TR');
-                if (val && index < boxes.length - 1) {
-                    box.value = val;
-                    boxes[index + 1].focus();
-                }
+                const val = e.target.value.toLocaleUpperCase('tr-TR').replace(/[^a-zA-ZÇĞİÖŞÜçğiöşü]/g, "");
+                box.value = val;
+                box.classList.remove('shake');
+                if (val && index < boxes.length - 1) boxes[index + 1].focus();
             });
             box.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                    boxes[index - 1].focus();
-                }
+                if (e.key === 'Backspace' && !e.target.value && index > 0) boxes[index - 1].focus();
             });
         });
 
+        [nameInput, emailInput].forEach(input => {
+            input.addEventListener('input', () => input.classList.remove('shake'));
+        });
+
         submitBtn.addEventListener('click', () => {
-            // Animasyonu her kutuya sırayla uygula
+            let isValid = true;
+            const word = Array.from(boxes).map(b => b.value).join('');
+
+            // Validasyon ve Shake Animasyonu
+            if (!nameInput.value.trim()) { 
+                nameInput.classList.add('shake'); 
+                isValid = false; 
+            }
+            if (!emailInput.value.includes('@') || emailInput.value.length < 5) { 
+                emailInput.classList.add('shake'); 
+                isValid = false; 
+            }
+            if (word.length < 5) { 
+                boxes.forEach(b => { if(!b.value) b.classList.add('shake'); });
+                isValid = false; 
+            }
+
+            // Animasyonların bitmesi için class temizliği (tekrar basılabilmesi için)
+            setTimeout(() => {
+                [nameInput, emailInput, ...boxes].forEach(el => el.classList.remove('shake'));
+            }, 500);
+
+            if (!isValid) return;
+
+            // Başarılı: Wordle Flip Animasyonu
             boxes.forEach((box, i) => {
-                setTimeout(() => {
-                    box.classList.add('flip-animate');
-                }, i * 150);
+                setTimeout(() => box.classList.add('flip-animate'), i * 150);
             });
 
-            // Animasyon bitince modalı aç
-            setTimeout(() => {
-                modal.style.display = 'flex';
-            }, 1000);
+            setTimeout(() => modal.style.display = 'flex', 1100);
         });
 
         function closeAndLock() {
@@ -281,6 +225,7 @@
             content.classList.add('readonly-mode');
             submitBtn.innerText = "GÖNDERİLDİ";
             submitBtn.style.background = "#787C7E";
+            submitBtn.style.boxShadow = "none";
             document.querySelectorAll('input').forEach(inp => inp.readOnly = true);
         }
     </script>
