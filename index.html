@@ -29,7 +29,12 @@
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: calc(var(--space-unit) * 4); }
         .logo { display: flex; align-items: center; gap: 8px; font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 1.3rem; }
-        .share-btn { font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+        
+        .share-btn { 
+            font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 0.9rem; 
+            cursor: pointer; display: flex; align-items: center; gap: 5px;
+            background: none; border: none; padding: 5px;
+        }
 
         h1 { font-size: clamp(24px, 7.5vw, 32px); font-weight: 700; line-height: 1.15; margin-bottom: calc(var(--space-unit) * 4); color: #000; }
         .highlight { color: var(--primary-purple); }
@@ -39,11 +44,9 @@
         .form-start-spacer { margin-top: calc(var(--space-unit) * 4); }
 
         .input-group { margin-bottom: calc(var(--space-unit) * 3); text-align: center; width: 100%; }
-        
         input.main-input {
             width: 100%; padding: 16px 20px; border-radius: 50px; border: 2px solid #000;
             background: #fff; font-family: 'Fuzzy Bubbles', cursive; font-size: 17px; outline: none; box-sizing: border-box;
-            transition: border-color 0.3s;
         }
 
         @keyframes shake {
@@ -59,35 +62,13 @@
         .word-section { margin-top: calc(var(--space-unit) * 3); }
         .word-label { font-weight: 700; font-size: 1.3rem; margin-bottom: calc(var(--space-unit) * 2.5); text-transform: uppercase; }
 
-        /* KRİTİK DÜZELTME: Taşmayı önleyen esnek kutu yapısı */
-        .boxes { 
-            display: flex; 
-            gap: 2.5%; /* Kutular arası güvenli boşluk */
-            justify-content: center; 
-            margin-bottom: calc(var(--space-unit) * 4); 
-            width: 100%; 
-            box-sizing: border-box;
-        }
+        .boxes { display: flex; gap: 2.5%; justify-content: center; margin-bottom: calc(var(--space-unit) * 4); width: 100%; }
 
         .letter-box {
-            width: 18%; /* Ekranın %18'i kadar genişlik (5 kutu + boşluklar = %100) */
-            aspect-ratio: 1; /* Kare formunu korur */
-            flex-shrink: 0; 
-            border: 2px solid #000; 
-            border-radius: 10px;
-            background: #fff; 
-            font-family: 'Fuzzy Bubbles', cursive; 
-            font-size: clamp(18px, 6vw, 28px); /* Yazı boyutu ekrana göre küçülür */
-            font-weight: 700; 
-            text-align: center; 
-            outline: none; 
-            text-transform: uppercase;
-            transition: all 0.6s; 
-            transform-style: preserve-3d; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            padding: 0;
+            width: 18%; aspect-ratio: 1; flex-shrink: 0; border: 2px solid #000; border-radius: 10px;
+            background: #fff; font-family: 'Fuzzy Bubbles', cursive; font-size: clamp(18px, 6vw, 28px);
+            font-weight: 700; text-align: center; outline: none; text-transform: uppercase;
+            transition: all 0.6s; transform-style: preserve-3d; display: flex; align-items: center; justify-content: center;
         }
 
         @keyframes wordleFlip {
@@ -106,7 +87,6 @@
             font-weight: 600; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 0 rgba(0,0,0,0.1);
             margin-bottom: 30px; transition: all 0.1s;
         }
-        .submit-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -131,7 +111,7 @@
                 <img src="data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='10' height='10' fill='%236AAA64'/%3E%3Crect x='11' y='11' width='10' height='10' fill='%23787C7E'/%3E%3C/svg%3E" alt="logo">
                 WORDLE Mix
             </div>
-            <div class="share-btn">PAYLAŞ ➔</div>
+            <button class="share-btn" id="shareBtn">PAYLAŞ ➔</button>
         </header>
 
         <h1>Yeni bir Wordle,<br>hem de kelimesi <span class="highlight">senden!</span></h1>
@@ -179,9 +159,31 @@
         const boxes = document.querySelectorAll('.letter-box');
         const modal = document.getElementById('modal');
         const submitBtn = document.getElementById('submitBtn');
+        const shareBtn = document.getElementById('shareBtn');
         const content = document.getElementById('pageContent');
         const nameInput = document.getElementById('fullName');
         const emailInput = document.getElementById('email');
+
+        // Paylaşım Fonksiyonu (Web Share API)
+        shareBtn.addEventListener('click', async () => {
+            const shareData = {
+                title: 'Wordle Mix',
+                text: 'Kendi Wordle kelimemi oluşturdum, sen de önerini gönder!',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    // Tarayıcı desteklemiyorsa linki kopyala
+                    await navigator.clipboard.writeText(window.location.href);
+                    alert('Bağlantı panoya kopyalandı!');
+                }
+            } catch (err) {
+                console.log('Paylaşım iptal edildi veya hata oluştu');
+            }
+        });
 
         boxes.forEach((box, index) => {
             box.addEventListener('input', (e) => {
@@ -210,11 +212,13 @@
                 isValid = false; 
             }
 
-            setTimeout(() => {
-                [nameInput, emailInput, ...boxes].forEach(el => el.classList.remove('shake'));
-            }, 500);
-
-            if (!isValid) return;
+            if (!isValid) {
+                // Hata animasyonu için class'ı resetle (arka arkaya basınca çalışması için)
+                setTimeout(() => {
+                    [nameInput, emailInput, ...boxes].forEach(el => el.classList.remove('shake'));
+                }, 500);
+                return;
+            }
 
             boxes.forEach((box, i) => {
                 setTimeout(() => box.classList.add('flip-animate'), i * 150);
