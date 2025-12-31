@@ -43,10 +43,9 @@
         input.main-input {
             width: 100%; padding: 16px 20px; border-radius: 50px; border: 2px solid #000;
             background: #fff; font-family: 'Fuzzy Bubbles', cursive; font-size: 17px; outline: none; box-sizing: border-box;
-            transition: border-color 0.3s, transform 0.2s;
+            transition: border-color 0.3s;
         }
 
-        /* Hata Animasyonu */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20%, 60% { transform: translateX(-6px); }
@@ -60,13 +59,35 @@
         .word-section { margin-top: calc(var(--space-unit) * 3); }
         .word-label { font-weight: 700; font-size: 1.3rem; margin-bottom: calc(var(--space-unit) * 2.5); text-transform: uppercase; }
 
-        .boxes { display: flex; gap: 2%; justify-content: space-between; margin-bottom: calc(var(--space-unit) * 4); width: 100%; }
+        /* KRİTİK DÜZELTME: Taşmayı önleyen esnek kutu yapısı */
+        .boxes { 
+            display: flex; 
+            gap: 2.5%; /* Kutular arası güvenli boşluk */
+            justify-content: center; 
+            margin-bottom: calc(var(--space-unit) * 4); 
+            width: 100%; 
+            box-sizing: border-box;
+        }
 
         .letter-box {
-            width: 18%; aspect-ratio: 1; flex-shrink: 0; border: 2px solid #000; border-radius: 10px;
-            background: #fff; font-family: 'Fuzzy Bubbles', cursive; font-size: clamp(20px, 6vw, 28px);
-            font-weight: 700; text-align: center; outline: none; text-transform: uppercase;
-            transition: all 0.6s; transform-style: preserve-3d; display: flex; align-items: center; justify-content: center;
+            width: 18%; /* Ekranın %18'i kadar genişlik (5 kutu + boşluklar = %100) */
+            aspect-ratio: 1; /* Kare formunu korur */
+            flex-shrink: 0; 
+            border: 2px solid #000; 
+            border-radius: 10px;
+            background: #fff; 
+            font-family: 'Fuzzy Bubbles', cursive; 
+            font-size: clamp(18px, 6vw, 28px); /* Yazı boyutu ekrana göre küçülür */
+            font-weight: 700; 
+            text-align: center; 
+            outline: none; 
+            text-transform: uppercase;
+            transition: all 0.6s; 
+            transform-style: preserve-3d; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 0;
         }
 
         @keyframes wordleFlip {
@@ -87,7 +108,6 @@
         }
         .submit-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
 
-        /* Yeni Tasarım Diliyle Popup */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); display: none; justify-content: center;
@@ -96,17 +116,9 @@
         .modal-content {
             background: #fff; width: 85%; max-width: 340px; padding: 40px 24px;
             border-radius: 28px; text-align: center; border: 3px solid #000;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
-        .modal-title { 
-            font-family: 'DynaPuff', cursive; font-size: 2.2rem; 
-            color: var(--wordle-green); margin-bottom: 15px; 
-            letter-spacing: -1px;
-        }
-        .modal-text {
-            font-family: 'Fuzzy Bubbles', cursive; font-size: 1.1rem; 
-            font-weight: 700; color: #000; line-height: 1.5; margin-bottom: 25px;
-        }
+        .modal-title { font-family: 'DynaPuff', cursive; font-size: 2.2rem; color: var(--wordle-green); margin-bottom: 15px; }
+        .modal-text { font-family: 'Fuzzy Bubbles', cursive; font-size: 1.1rem; font-weight: 700; color: #000; line-height: 1.5; margin-bottom: 25px; }
 
         .readonly-mode { pointer-events: none; opacity: 0.85; }
     </style>
@@ -142,12 +154,12 @@
 
         <div class="word-section">
             <div class="word-label">BENİM KELİMEM:</div>
-            <div class="boxes" id="boxContainer">
-                <input type="text" class="letter-box" maxlength="1">
-                <input type="text" class="letter-box" maxlength="1">
-                <input type="text" class="letter-box" maxlength="1">
-                <input type="text" class="letter-box" maxlength="1">
-                <input type="text" class="letter-box" maxlength="1">
+            <div class="boxes">
+                <input type="text" class="letter-box" maxlength="1" inputmode="text">
+                <input type="text" class="letter-box" maxlength="1" inputmode="text">
+                <input type="text" class="letter-box" maxlength="1" inputmode="text">
+                <input type="text" class="letter-box" maxlength="1" inputmode="text">
+                <input type="text" class="letter-box" maxlength="1" inputmode="text">
             </div>
         </div>
 
@@ -183,36 +195,27 @@
             });
         });
 
-        [nameInput, emailInput].forEach(input => {
-            input.addEventListener('input', () => input.classList.remove('shake'));
+        [nameInput, emailInput].forEach(inp => {
+            inp.addEventListener('input', () => inp.classList.remove('shake'));
         });
 
         submitBtn.addEventListener('click', () => {
             let isValid = true;
             const word = Array.from(boxes).map(b => b.value).join('');
 
-            // Validasyon ve Shake Animasyonu
-            if (!nameInput.value.trim()) { 
-                nameInput.classList.add('shake'); 
-                isValid = false; 
-            }
-            if (!emailInput.value.includes('@') || emailInput.value.length < 5) { 
-                emailInput.classList.add('shake'); 
-                isValid = false; 
-            }
+            if (!nameInput.value.trim()) { nameInput.classList.add('shake'); isValid = false; }
+            if (!emailInput.value.includes('@')) { emailInput.classList.add('shake'); isValid = false; }
             if (word.length < 5) { 
                 boxes.forEach(b => { if(!b.value) b.classList.add('shake'); });
                 isValid = false; 
             }
 
-            // Animasyonların bitmesi için class temizliği (tekrar basılabilmesi için)
             setTimeout(() => {
                 [nameInput, emailInput, ...boxes].forEach(el => el.classList.remove('shake'));
             }, 500);
 
             if (!isValid) return;
 
-            // Başarılı: Wordle Flip Animasyonu
             boxes.forEach((box, i) => {
                 setTimeout(() => box.classList.add('flip-animate'), i * 150);
             });
@@ -225,7 +228,6 @@
             content.classList.add('readonly-mode');
             submitBtn.innerText = "GÖNDERİLDİ";
             submitBtn.style.background = "#787C7E";
-            submitBtn.style.boxShadow = "none";
             document.querySelectorAll('input').forEach(inp => inp.readOnly = true);
         }
     </script>
