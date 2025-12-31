@@ -14,174 +14,181 @@
             --primary-purple: #807ae8;
             --wordle-green: #6AAA64;
             --wordle-grey: #787C7E;
-            --error-red: #e64a4a;
-            --text-dark: #1a1a1a;
+            --bg-gradient: linear-gradient(180deg, #FFFFFF 0%, #F9FBFF 100%);
+            /* Oranlı boşluk birimi */
+            --space-unit: 8px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #F9FBFF;
+            overflow-x: hidden;
+        }
 
         body {
-            background-color: #333;
             font-family: 'Fuzzy Bubbles', cursive;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 10px;
         }
 
-        .mobile-container {
-            background: linear-gradient(180deg, #FFFFFF 0%, #EFF6FF 100%);
+        .main-wrapper {
             width: 100%;
-            max-width: 400px;
-            min-height: 850px;
-            padding: 30px 20px;
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            max-width: 414px;
+            min-height: 100vh;
+            padding: calc(var(--space-unit) * 4) calc(var(--space-unit) * 3.5);
             display: flex;
             flex-direction: column;
-            border-radius: 24px;
+            box-sizing: border-box;
         }
 
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: calc(var(--space-unit) * 5);
+        }
         
         .logo {
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: var(--space-unit);
             font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 1.3rem;
         }
-        .logo-icon { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
-        .sq { width: 9px; height: 9px; }
-        .sq-green { background-color: var(--wordle-green); }
-        .sq-grey { background-color: var(--wordle-grey); }
 
         .share-btn {
             font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 0.9rem;
             display: flex; align-items: center; gap: 5px; cursor: pointer;
         }
 
-        /* Typography */
         h1 {
-            font-family: 'Fuzzy Bubbles', cursive; font-size: 1.85rem; font-weight: 700;
-            line-height: 1.2; margin-bottom: 25px; color: var(--text-dark);
+            font-size: clamp(26px, 8.5vw, 32px);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: calc(var(--space-unit) * 4);
+            color: #000;
         }
+
         .highlight { color: var(--primary-purple); }
         .highlight-green { color: var(--wordle-green); }
 
-        p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 18px; color: #333; }
+        .content-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: calc(var(--space-unit) * 3);
+            color: #000;
+        }
 
-        /* Form Inputs */
-        .input-group { margin-bottom: 20px; text-align: center; }
+        /* Paragraflar ve Ad Soyad arasındaki özel açılan boşluk */
+        .form-start-spacer {
+            margin-top: calc(var(--space-unit) * 5);
+        }
+
+        .input-group { 
+            margin-bottom: calc(var(--space-unit) * 4); 
+            text-align: center; 
+        }
         
         input.main-input {
             width: 100%;
-            padding: 14px 22px;
+            padding: 16px 24px;
             border-radius: 50px;
             border: 1.5px solid #000;
             background: #fff;
-            font-family: 'Fuzzy Bubbles', cursive; font-size: 1rem;
-            outline: none; transition: border-color 0.3s;
+            font-family: 'Fuzzy Bubbles', cursive;
+            font-size: 17px;
+            outline: none;
         }
-        input.main-input:focus { border-color: var(--primary-purple); }
-        input.error-border { border-color: var(--error-red) !important; background-color: #fffafa; }
 
         .helper-text {
-            font-family: 'Caveat', cursive; font-size: 1.1rem; color: #555; font-weight: 600;
-            margin-top: 6px; display: block;
+            font-family: 'Caveat', cursive; 
+            font-size: 17px;
+            color: #333;
+            margin-top: calc(var(--space-unit) * 1.5);
+            display: block;
         }
 
-        /* Wordle Section */
-        .word-section { margin-top: 35px; }
+        .bold-name { font-weight: 700; }
+
+        .word-section { margin-top: calc(var(--space-unit) * 4); }
         .word-label {
-            font-family: 'Fuzzy Bubbles', cursive; font-weight: 700; font-size: 1.3rem;
-            margin-bottom: 15px; text-transform: uppercase;
+            font-weight: 700; 
+            font-size: 1.3rem;
+            margin-bottom: calc(var(--space-unit) * 2.5); 
+            text-transform: uppercase;
         }
 
-        .boxes { display: flex; gap: 8px; justify-content: space-between; margin-bottom: 10px; }
+        .boxes { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: space-between; 
+            margin-bottom: calc(var(--space-unit) * 6); 
+        }
 
         .letter-box {
-            width: 18%; aspect-ratio: 1;
-            border: 1.5px solid #000; border-radius: 12px;
+            width: 18%;
+            aspect-ratio: 1;
+            border: 1.5px solid #000;
+            border-radius: 12px;
             background: #fff;
-            font-family: 'Fuzzy Bubbles', cursive; font-size: 2rem; font-weight: 700;
-            text-align: center; outline: none; text-transform: uppercase;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .letter-box:focus { border-color: var(--wordle-green); box-shadow: 0 0 8px rgba(106, 170, 100, 0.3); }
-
-        /* Feedback Area */
-        #feedback-area {
-            min-height: 24px; margin: 15px 0;
-            text-align: center; font-size: 0.9rem; font-weight: 700;
-            color: var(--error-red); opacity: 0; transition: opacity 0.3s;
+            font-family: 'Fuzzy Bubbles', cursive;
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            text-transform: uppercase;
         }
 
-        /* Submit Button */
+        .spacer { flex-grow: 1; min-height: 30px; }
+
         .submit-btn {
-            background-color: var(--wordle-green); color: white;
-            border: 1.5px solid #000; width: 85%; padding: 16px;
-            border-radius: 50px; font-family: 'DynaPuff', cursive;
-            font-size: 1.3rem; font-weight: 600; cursor: pointer;
-            margin: 10px auto 0; display: block;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: all 0.1s;
-        }
-        .submit-btn:active { transform: translateY(2px); box-shadow: none; }
-
-        /* Animations */
-        @keyframes flip-success {
-            0% { transform: rotateX(0); }
-            50% { transform: rotateX(90deg); background-color: #fff; }
-            100% { transform: rotateX(0); background-color: var(--wordle-green); border-color: var(--wordle-green); color: #fff; }
-        }
-        .animate-flip { animation: flip-success 0.6s ease forwards; }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
-        }
-        .shake { animation: shake 0.4s ease-in-out; }
-
-        /* Modal */
-        .modal-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); display: flex; justify-content: center;
-            align-items: center; opacity: 0; visibility: hidden; transition: 0.4s;
-            z-index: 100; backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background: #fff; width: 85%; padding: 40px 20px; border-radius: 24px;
-            text-align: center; border: 3px solid #000;
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-title { font-family: 'DynaPuff', cursive; font-size: 2rem; color: var(--wordle-green); margin-bottom: 15px; }
-        .modal-close {
-            margin-top: 25px; background: #000; color: #fff; border: none;
-            padding: 12px 30px; border-radius: 50px; font-family: 'DynaPuff', cursive; cursor: pointer;
+            background-color: var(--wordle-green);
+            color: white;
+            border: 1.5px solid #000;
+            width: 100%;
+            padding: 18px;
+            border-radius: 50px;
+            font-family: 'DynaPuff', cursive;
+            font-size: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            margin-bottom: calc(var(--space-unit) * 4);
         }
     </style>
 </head>
 <body>
 
-    <div class="mobile-container">
+    <div class="main-wrapper">
         <header>
             <div class="logo">
-                <div class="logo-icon"><div class="sq sq-green"></div><div class="sq sq-grey"></div></div>
+                <img src="data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='10' height='10' fill='%236AAA64'/%3E%3Crect x='11' y='11' width='10' height='10' fill='%23787C7E'/%3E%3C/svg%3E" alt="logo">
                 WORDLE Mix
             </div>
-            <div class="share-btn">PAYLAŞ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></div>
+            <div class="share-btn">PAYLAŞ ➔</div>
         </header>
 
         <h1>Yeni bir Wordle,<br>hem de kelimesi <span class="highlight">senden!</span></h1>
         
-        <p>Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın.</p>
-        <p>Yeni Wordle Mix'te artık heyecanı sen yaratıyorsun: <span class="highlight-green">Hem çözen hem soran sensin.</span></p>
+        <div class="content-text">
+            Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın.
+        </div>
         
-        <p>Aklındaki 5 harfli kelimeyi gönder, sırası geldiğinde herkes <span class="highlight">senin kelimeni</span> oynasın!</p>
+        <div class="content-text">
+            Yeni Wordle Mix'te artık heyecanı sen yaratıyorsun: <span class="highlight-green">Hem çözen hem soran sensin.</span>
+        </div>
+        
+        <div class="content-text">
+            Aklındaki 5 harfli kelimeyi gönder, sırası geldiğinde herkes <span class="highlight">senin kelimeni</span> oynasın!
+        </div>
+
+        <div class="form-start-spacer"></div>
 
         <div class="input-group">
             <input type="text" id="fullName" class="main-input" placeholder="Ad Soyad">
-            <span class="helper-text">Örnek: Günün Kelimesi Can Sorgun tarafından oluşturuldu</span>
+            <span class="helper-text">Örnek: Günün Kelimesi <span class="bold-name">Can Sorgun</span> tarafından oluşturuldu</span>
         </div>
 
         <div class="input-group">
@@ -191,7 +198,7 @@
 
         <div class="word-section">
             <div class="word-label">BENİM KELİMEM:</div>
-            <div class="boxes" id="wordContainer">
+            <div class="boxes">
                 <input type="text" class="letter-box" maxlength="1" inputmode="text">
                 <input type="text" class="letter-box" maxlength="1" inputmode="text">
                 <input type="text" class="letter-box" maxlength="1" inputmode="text">
@@ -200,87 +207,26 @@
             </div>
         </div>
 
-        <div id="feedback-area">Hata mesajı burada görünecek</div>
+        <div class="spacer"></div>
+
         <button class="submit-btn" id="submitBtn">GÖNDER</button>
-
-        <div class="modal-overlay" id="successModal">
-            <div class="modal-content">
-                <div class="modal-title">HARİKA!</div>
-                <p style="font-family:'Fuzzy Bubbles'; font-weight:700;">Kelimeni önerdin. Zamanı geldiğinde sana haber vereceğiz!</p>
-                <button class="modal-close" onclick="location.reload()">TAMAM</button>
-            </div>
-        </div>
     </div>
 
     <script>
         const boxes = document.querySelectorAll('.letter-box');
-        const submitBtn = document.getElementById('submitBtn');
-        const feedback = document.getElementById('feedback-area');
-
-        // Kutucuklar Arası Geçiş (Kökten Çözüm)
         boxes.forEach((box, index) => {
-            // Yazma işlemi
             box.addEventListener('input', (e) => {
                 const val = e.target.value.toLocaleUpperCase('tr-TR');
-                const isLetter = /^[a-zA-ZçÇğĞıİöÖşŞüÜ]$/.test(val);
-
-                if (isLetter) {
+                if (val && index < boxes.length - 1) {
                     box.value = val;
-                    if (index < boxes.length - 1) boxes[index + 1].focus();
-                } else {
-                    box.value = '';
+                    boxes[index + 1].focus();
                 }
             });
-
-            // Silme işlemi (Backspace)
             box.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && box.value === '' && index > 0) {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
                     boxes[index - 1].focus();
                 }
             });
-        });
-
-        // Validasyon ve Gönderme
-        submitBtn.addEventListener('click', () => {
-            const name = document.getElementById('fullName');
-            const email = document.getElementById('email');
-            const word = Array.from(boxes).map(b => b.value).join('');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            let errorMsg = "";
-            let targets = [];
-
-            if (name.value.trim().length < 2) {
-                errorMsg = "Ad Soyad en az 2 karakter olmalı!";
-                targets.push(name);
-            } else if (!emailRegex.test(email.value)) {
-                errorMsg = "Geçerli bir e-mail adresi girin!";
-                targets.push(email);
-            } else if (word.length < 5) {
-                errorMsg = "Lütfen 5 harfli kelimeyi tamamla!";
-                targets = [...boxes];
-            }
-
-            if (errorMsg) {
-                feedback.innerText = errorMsg;
-                feedback.style.opacity = "1";
-                targets.forEach(el => {
-                    el.classList.add('error-border', 'shake');
-                    setTimeout(() => el.classList.remove('shake'), 400);
-                });
-            } else {
-                // Başarılı
-                feedback.style.opacity = "0";
-                submitBtn.disabled = true;
-                
-                boxes.forEach((box, i) => {
-                    setTimeout(() => box.classList.add('animate-flip'), i * 150);
-                });
-
-                setTimeout(() => {
-                    document.getElementById('successModal').classList.add('active');
-                }, 1200);
-            }
         });
     </script>
 </body>
