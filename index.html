@@ -36,10 +36,9 @@
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             color: var(--text-main);
-            /* ZOOM VE TAŞMAYI ENGELLEMEK İÇİN KRİTİK AYARLAR */
             overflow: hidden; 
-            touch-action: pan-x pan-y; /* Pinch zoom'u engeller */
-            position: fixed; /* iOS'te scroll bounce'u engeller */
+            touch-action: pan-x pan-y;
+            position: fixed;
         }
 
         .container {
@@ -48,11 +47,11 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            height: 100dvh; /* min-height yerine height kullanıldı */
+            height: 100dvh;
             padding: 0 24px 30px;
             position: relative;
-            overflow-y: auto; /* İçerik taşarsa sadece dikey scroll */
-            overflow-x: hidden; /* Yatay taşmayı kesinlikle engelle */
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         /* HEADER */
@@ -81,12 +80,12 @@
         }
         .share-icon { width: 18px; height: 18px; fill: #000; transform: translateY(1px); }
 
-        /* --- FORM EKRANI STİLLERİ --- */
+        /* FORM STYLES */
         #form-view {
             width: 100%;
             display: flex;
             flex-direction: column;
-            flex: 1; /* Alana yayıl */
+            flex: 1;
         }
 
         .main-big-title {
@@ -126,13 +125,14 @@
             letter-spacing: 0.5px;
         }
 
-        /* 5 Harfli Kelime Inputları */
+        /* 5-Letter Word Grid */
         .word-grid {
             display: flex;
             gap: 8px;
             justify-content: space-between;
             margin-bottom: 32px;
             width: 100%;
+            cursor: text; /* Grid'e tıklayınca input algısı */
         }
         .letter-box {
             width: 18%; aspect-ratio: 1/1;
@@ -141,7 +141,7 @@
             text-align: center; font-size: 28px; font-weight: 700;
             text-transform: uppercase; color: var(--text-main);
             caret-color: transparent; transition: all 0.2s;
-            padding: 0; /* Input padding sıfırlama */
+            padding: 0;
         }
         .letter-box:focus { outline: none; border-color: #999; }
         .letter-box.filled {
@@ -149,7 +149,7 @@
             animation: pop 0.3s ease forwards;
         }
 
-        /* Bilgi Inputları */
+        /* Info Inputs */
         .form-group {
             display: flex;
             flex-direction: column;
@@ -177,17 +177,17 @@
             margin-bottom: 20px;
         }
 
-        /* BUTON */
+        /* Button */
         .button {
             width: 100%; height: 56px; border-radius: 30px;
             font-weight: 700; font-size: 16px; border: none;
-            margin-top: auto; /* Sayfanın altına iter */
+            margin-top: auto;
             transition: all 0.3s ease;
             background-color: var(--btn-passive-bg);
             color: var(--btn-passive-text);
             pointer-events: none;
             flex-shrink: 0;
-            margin-bottom: 10px; /* En altta biraz boşluk kalsın */
+            margin-bottom: 10px;
         }
         .button.is-active {
             background-color: var(--btn-active-bg); 
@@ -198,20 +198,19 @@
         .button.is-active:active { transform: scale(0.98); }
 
 
-        /* --- SONUÇ EKRANI STİLLERİ (ÖZEL TASARIM) --- */
+        /* RESULT SCREEN */
         #result-screen {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start; 
             padding-top: 20px;
-            height: 100%; /* Yüksekliği garanti et */
-            width: 100%; /* Genişliği garanti et */
+            height: 100%;
+            width: 100%;
             position: relative;
-            overflow: hidden; /* Taşmaları gizle */
+            overflow: hidden;
         }
 
-        /* Görsel Alan (Izgara) Wrapper */
         .result-visual-wrapper {
             position: relative;
             width: 100%;
@@ -235,12 +234,10 @@
             gap: 8px; 
             width: 100%;
             max-width: 340px; 
-            /* ALTTA NEGATİF BOŞLUK: Yazının yukarı kayması için */
             margin-bottom: -150px; 
             position: relative;
         }
         
-        /* Fade Maskesi */
         .faded-rows {
             grid-column: 1 / -1; 
             display: grid;
@@ -267,7 +264,6 @@
             background: transparent;
         }
 
-        /* Başarı Metinleri */
         .success-content {
             position: relative;
             z-index: 10;
@@ -279,13 +275,11 @@
             flex-grow: 1; 
         }
 
-        /* Yazı Grubu */
         .text-group {
             margin-top: 0; 
             padding-top: 20px;
-            /* Yazının daha net okunması için arka plan geçişi */
             background: radial-gradient(ellipse at center, var(--bg-color) 40%, transparent 80%);
-            width: 100%; /* Genişlik vererek ortalamayı garanti et */
+            width: 100%;
         }
 
         .success-title {
@@ -307,9 +301,7 @@
         }
 
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        .shake { animation: shake 0.4s; border-color: #d23b3b !important; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-
+        
     </style>
 </head>
 <body>
@@ -387,10 +379,11 @@
     const successRow = document.getElementById('successRow');
     const fadedRows = document.getElementById('fadedRows');
     const visualWrapper = document.getElementById('visualWrapper');
+    const wordGrid = document.getElementById('wordGrid');
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // BOŞ IZGARAYI OLUŞTUR
+    // BOŞ IZGARAYI OLUŞTUR (Görsel amaçlı alttaki flu alan)
     function createFadedGrid() {
         fadedRows.innerHTML = '';
         for (let i = 0; i < 20; i++) {
@@ -401,7 +394,7 @@
     }
     createFadedGrid();
 
-    // FORM DURUMUNU KONTROL ET
+    // FORM DOĞRULAMA
     function checkFormState() {
         const word = Array.from(boxes).map(b => b.value).join('');
         const isWordComplete = word.length === 5;
@@ -415,28 +408,84 @@
         }
     }
 
-    // INPUT EVENTLERİ
+    // ODAK YÖNETİMİ (Stack Mantığı: Her zaman ilk boş kutuya git)
+    function focusNextEmpty() {
+        const emptyIndex = Array.from(boxes).findIndex(box => box.value === '');
+        if (emptyIndex !== -1) {
+            boxes[emptyIndex].focus();
+        } else {
+            boxes[boxes.length - 1].focus();
+        }
+    }
+
+    // GLOBAL SİLME MANTIĞI (Sondan sil)
+    function deleteLastChar() {
+        // Dolu olan kutuları filtrele
+        const filledBoxes = Array.from(boxes).filter(box => box.value !== '');
+        
+        if (filledBoxes.length > 0) {
+            // En sondaki dolu kutuyu bul ve sil
+            const lastFilledBox = filledBoxes[filledBoxes.length - 1];
+            lastFilledBox.value = '';
+            lastFilledBox.classList.remove('filled');
+            lastFilledBox.focus();
+        } else {
+            // Hiçbiri dolu değilse en başa odaklan
+            boxes[0].focus();
+        }
+        checkFormState();
+    }
+
+    // INPUT EVENT LISTENERS
     boxes.forEach((box, index) => {
+        
+        // Kutuya tıklanırsa (focus olursa) zorla doğru sıraya at
+        box.addEventListener('focus', (e) => {
+            setTimeout(() => {
+                const emptyIndex = Array.from(boxes).findIndex(b => b.value === '');
+                // Eğer tıklanan kutu, ilk boş kutudan sonraysa, ilk boş kutuya odakla
+                if (emptyIndex !== -1 && index > emptyIndex) {
+                    boxes[emptyIndex].focus();
+                }
+            }, 0);
+        });
+
+        // Harf Girişi
         box.addEventListener('input', (e) => {
             let val = e.target.value.replace(/[^a-zA-ZÇĞİÖŞÜçğiöşü]/g, "").toLocaleUpperCase('tr-TR');
+            
+            // Tek seferde birden fazla harf girilirse sadece ilkini al
+            if (val.length > 1) val = val[0];
+            
             box.value = val;
+
             if (val) {
                 box.classList.add('filled');
-                if (index < boxes.length - 1) boxes[index + 1].focus();
+                // Dolduysa sonrakine geç
+                if (index < boxes.length - 1) {
+                    boxes[index + 1].focus();
+                }
             } else {
                 box.classList.remove('filled');
             }
             checkFormState();
         });
 
+        // Silme Tuşu Kontrolü
         box.addEventListener('keydown', (e) => {
             if (e.key === 'Backspace') {
-                if (!box.value && index > 0) boxes[index - 1].focus();
-                setTimeout(() => { if(!box.value) box.classList.remove('filled'); checkFormState(); }, 10);
+                e.preventDefault(); // Standart silmeyi durdur
+                deleteLastChar();   // Özel silme fonksiyonunu çağır
             }
         });
     });
 
+    // Grid alanına boşluğa tıklanırsa da inputa odaklan
+    wordGrid.addEventListener('click', () => {
+        focusNextEmpty();
+    });
+
+    // İsim ve Mail input kontrolü
     [nameInput, emailInput].forEach(input => {
         input.addEventListener('input', () => {
             input.value.trim().length > 0 ? input.classList.add('has-value') : input.classList.remove('has-value');
@@ -444,7 +493,7 @@
         });
     });
 
-    // GÖNDER BUTONU
+    // GÖNDERME İŞLEMİ
     submitBtn.addEventListener('click', () => {
         if (!submitBtn.classList.contains('is-active')) return;
 
@@ -452,6 +501,7 @@
         submitBtn.textContent = "Gönderiliyor...";
         
         setTimeout(() => {
+            // Sonuç ekranına kelimeyi yaz
             successRow.innerHTML = '';
             word.split('').forEach(char => {
                 const div = document.createElement('div');
@@ -460,10 +510,12 @@
                 successRow.appendChild(div);
             });
 
+            // Ekran geçişi
             formView.style.display = 'none';
             resultScreen.style.display = 'flex'; 
             window.scrollTo(0, 0);
 
+            // Animasyon
             setTimeout(() => {
                 visualWrapper.classList.add('animate-in');
             }, 50);
@@ -471,6 +523,7 @@
         }, 800);
     });
 
+    // Paylaş Butonu
     document.getElementById('shareBtn').addEventListener('click', async () => {
         if (navigator.share) {
             try { await navigator.share({ title: 'Bundle Wordle Mix', url: window.location.href }); } catch (err) {}
