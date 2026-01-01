@@ -2,260 +2,462 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wordle Mix</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Wordle Mix | Bundle Games</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=DynaPuff:wght@400;600;700&family=Fuzzy+Bubbles:wght@400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-purple: #807ae8;
-            --wordle-green: #6AAA64;
-            --wordle-red: #e74c3c;
-            --bg-gradient: linear-gradient(180deg, #FFFFFF 40%, #F2F7FF 100%);
-            --space-unit: 8px;
+            --bg-color: #F3F0E7;
+            --input-bg: #EAE6D9;
+            --input-border-passive: #D8D4C8;
+            --input-border-active: #000000;
+            --text-main: #111111;
+            
+            --btn-passive-bg: #DCECC4;
+            --btn-passive-text: #8E9C7A;
+            --btn-active-bg: #B8E088;
+            --btn-active-text: #000000;
+            
+            --wordle-green: #75A66E;
+            --grid-empty-border: #E3E1D5;
+            
+            --radius-box: 16px; 
+            --radius-md: 16px;
         }
 
-        /* Temel Reset */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; margin: 0; padding: 0; background: #F2F7FF; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        body { font-family: 'Fuzzy Bubbles', cursive; background: var(--bg-gradient); background-attachment: fixed; display: flex; justify-content: center; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
-        .main-wrapper {
-            width: 100%; max-width: 414px; min-height: 100vh;
-            padding: calc(var(--space-unit) * 3) 24px;
-            display: flex; flex-direction: column; position: relative;
+        html, body {
+            height: 100%;
+            background: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: var(--text-main);
+            overflow-x: hidden; /* Yatay taşmayı engelle */
+            overflow-y: auto;   /* Dikey scrolla izin ver */
         }
 
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: calc(var(--space-unit) * 4); }
-        .logo { display: flex; align-items: center; gap: 8px; font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 1.3rem; }
-        .share-btn { font-family: 'DynaPuff', cursive; font-weight: 700; font-size: 0.9rem; cursor: pointer; background: none; border: none; color: #000; }
-
-        /* Metinler */
-        h1 { font-size: clamp(24px, 7.5vw, 32px); font-weight: 700; line-height: 1.15; margin-bottom: 25px; color: #000; }
-        .highlight { color: var(--primary-purple); }
-        .highlight-green { color: var(--wordle-green); }
-        .content-text { font-size: 17.5px; line-height: 1.7; margin-bottom: 18px; color: #000; font-weight: 700; }
-
-        /* Form */
-        .form-start-spacer { margin-top: 30px; }
-        .input-group { margin-bottom: 24px; text-align: center; }
-        input.main-input {
-            width: 100%; padding: 16px 22px; border-radius: 50px; border: 2px solid #000;
-            background: #fff; font-family: 'Fuzzy Bubbles', cursive; font-size: 17px; outline: none;
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            padding: 0 24px 30px;
+            position: relative;
         }
 
-        /* Hata Animasyonu */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
+        /* HEADER */
+        #header {
+            padding: 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
         }
-        .shake { animation: shake 0.4s ease-in-out; border-color: var(--wordle-red) !important; }
-
-        .helper-text { font-family: 'Caveat', cursive; font-size: 17px; color: #333; margin-top: 10px; display: block; }
-        .bold-name { font-weight: 700; }
-
-        /* Wordle Kutuları */
-        .word-section { margin-top: 24px; }
-        .word-label { font-weight: 700; font-size: 1.3rem; margin-bottom: 20px; text-transform: uppercase; }
-        .boxes { display: flex; gap: 2.5%; justify-content: space-between; margin-bottom: 30px; width: 100%; }
+        .logo-img { height: 28px; width: auto; display: block; }
         
-        .box-wrapper { position: relative; width: 18%; padding-top: 18%; }
+        .share-box {
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-family: "Inter", sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: #000000;
+            padding: 0;
+        }
+        .share-icon { width: 18px; height: 18px; fill: #000; transform: translateY(1px); }
+
+        /* --- FORM EKRANI STİLLERİ --- */
+        .main-big-title {
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+            margin-bottom: 24px;
+            color: var(--text-main);
+        }
+
+        .hero-wrapper {
+            width: 100%;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .hero-wrapper img { width: 100%; height: auto; display: block; }
+
+        .main-description {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #444;
+            margin-bottom: 32px;
+            font-weight: 500;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            display: block;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* 5 Harfli Kelime Inputları */
+        .word-grid {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
         .letter-box {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 2px solid #000; border-radius: 10px; background: #fff;
-            font-family: 'Fuzzy Bubbles', cursive; font-size: clamp(18px, 5vw, 26px);
-            font-weight: 700; text-align: center; outline: none; text-transform: uppercase;
-            display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+            width: 18%; aspect-ratio: 1/1;
+            border: 2px solid #D8D4C8; background: transparent;
+            border-radius: var(--radius-box);
+            text-align: center; font-size: 28px; font-weight: 700;
+            text-transform: uppercase; color: var(--text-main);
+            caret-color: transparent; transition: all 0.2s;
+        }
+        .letter-box:focus { outline: none; border-color: #999; }
+        .letter-box.filled {
+            background-color: var(--wordle-green); color: white; border-color: var(--wordle-green);
+            animation: pop 0.3s ease forwards;
         }
 
-        @keyframes wordleFlip {
-            0% { transform: rotateX(0); }
-            45% { transform: rotateX(90deg); background: #fff; }
-            55% { transform: rotateX(90deg); background: var(--wordle-green); border-color: var(--wordle-green); color: #fff; }
-            100% { transform: rotateX(0); background: var(--wordle-green); border-color: var(--wordle-green); color: #fff; }
+        /* Bilgi Inputları */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
         }
-        .flip-animate { animation: wordleFlip 0.6s ease forwards; }
+        .main-input {
+            width: 100%; height: 52px; padding: 0 20px;
+            border-radius: var(--radius-md); 
+            border: 1px solid var(--input-border-passive);
+            background-color: var(--input-bg);
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--text-main);
+            outline: none; transition: all 0.2s;
+        }
+        .main-input:focus, .main-input.has-value {
+            border-color: var(--input-border-active); 
+            background-color: #F8F6F0; 
+        }
 
-        /* Butonlar */
-        .spacer { flex-grow: 1; min-height: 40px; }
-        .submit-btn {
-            background-color: var(--wordle-green); color: white; border: 2px solid #000; width: 100%;
-            padding: 18px; border-radius: 50px; font-family: 'DynaPuff', cursive; font-size: 24px;
-            font-weight: 600; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+        .footer-note {
+            font-size: 11px;
+            color: #888;
+            line-height: 1.4;
+            margin-bottom: 20px;
         }
 
-        /* Hata Toast Pop-up */
-        .toast {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: #333; color: #fff; padding: 12px 24px; border-radius: 50px;
-            font-family: 'DynaPuff', cursive; font-size: 0.9rem; z-index: 2000;
-            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); white-space: nowrap;
+        /* BUTON */
+        .button {
+            width: 100%; height: 56px; border-radius: 30px;
+            font-weight: 700; font-size: 16px; border: none;
+            margin-top: auto; /* Sayfanın altına iter */
+            transition: all 0.3s ease;
+            background-color: var(--btn-passive-bg);
+            color: var(--btn-passive-text);
+            pointer-events: none;
+            flex-shrink: 0;
         }
-        .toast.show { top: 30px; }
+        .button.is-active {
+            background-color: var(--btn-active-bg); 
+            color: var(--btn-active-text);
+            pointer-events: auto; cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .button.is-active:active { transform: scale(0.98); }
 
-        /* Modal */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); display: none; justify-content: center;
-            align-items: center; z-index: 1000; backdrop-filter: blur(8px);
-        }
-        .modal-content {
-            background: #fff; width: 85%; max-width: 340px; padding: 40px 24px;
-            border-radius: 28px; text-align: center; border: 3px solid #000;
-        }
-        .modal-title { font-family: 'DynaPuff', cursive; font-size: 2.2rem; color: var(--wordle-green); margin-bottom: 15px; }
 
-        .readonly-mode { pointer-events: none; opacity: 0.85; }
+        /* --- SONUÇ EKRANI STİLLERİ (ÖZEL TASARIM) --- */
+        #result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            padding-top: 20px;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Görsel Alan (Izgara) Wrapper */
+        .result-visual-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateY(60px); 
+            opacity: 0;
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1;
+        }
+        
+        .result-visual-wrapper.animate-in {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px; 
+            width: 100%;
+            max-width: 340px; 
+            /* ALTTA NEGATİF BOŞLUK: Yazının yukarı kayması için */
+            margin-bottom: -150px; 
+            position: relative;
+        }
+        
+        /* Fade Maskesi: Alt satırlar silikleşir */
+        .faded-rows {
+            grid-column: 1 / -1; 
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            opacity: 0.6;
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 90%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 90%);
+        }
+
+        .success-box {
+            aspect-ratio: 1/1;
+            background-color: var(--wordle-green);
+            color: white; font-weight: 700; font-size: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-box); text-transform: uppercase;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .empty-grid-box {
+            aspect-ratio: 1/1;
+            border: 2px solid var(--grid-empty-border);
+            border-radius: var(--radius-box);
+            background: transparent;
+        }
+
+        /* Başarı Metinleri */
+        .success-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1; 
+        }
+
+        /* Yazı Grubu */
+        .text-group {
+            margin-top: 0; 
+            padding-top: 20px;
+            /* Yazının daha net okunması için arka plan geçişi */
+            background: radial-gradient(ellipse at center, var(--bg-color) 40%, transparent 80%);
+        }
+
+        .success-title {
+            font-size: 40px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -1.5px;
+            color: #000;
+            line-height: 1;
+        }
+
+        .success-desc {
+            font-size: 17px;
+            color: #999;
+            line-height: 1.4;
+            font-weight: 500;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .shake { animation: shake 0.4s; border-color: #d23b3b !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
     </style>
 </head>
 <body>
 
-    <div id="toast" class="toast">Hata Mesajı</div>
+<div class="container" id="App">
+    
+    <header id="header">
+        <a href="#"><img src="https://i.ibb.co/4n55kpBQ/Wordle-Mix-Logo-1.png" alt="Wordle Mix Logo" class="logo-img"></a>
+        <button class="share-box" id="shareBtn">
+            Paylaş
+            <svg class="share-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 5V9C7 9 4 14 3 19C5.5 15.5 9 13.9 14 13.9V17.9L21 11.45L14 5Z" fill="currentColor"/>
+            </svg>
+        </button>
+    </header>
 
-    <div class="main-wrapper" id="pageContent">
-        <header>
-            <div class="logo">
-                <img src="data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='10' height='10' fill='%236AAA64'/%3E%3Crect x='11' y='11' width='10' height='10' fill='%23787C7E'/%3E%3C/svg%3E" alt="logo">
-                WORDLE Mix
-            </div>
-            <button class="share-btn" id="shareBtn">PAYLAŞ ➔</button>
-        </header>
+    <main id="form-view">
+        <h1 class="main-big-title">Bundle Games’e yeni<br>oyun: Wordle Mix</h1>
+        <div class="hero-wrapper"><img src="https://i.ibb.co/VYhtFZdS/Twitter-post-1.png" alt="Bundle Wordle Mix"></div>
+        <p class="main-description">
+            Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın. Yeni Wordle Mix’te ise artık <b>heyecanı sen yaratıyorsun:</b><br><br>
+            Aklındaki <b>5 harfli kelimeyi gönder</b>, günü geldiğinde herkes senin kelimeni oynasın!
+        </p>
 
-        <h1>Yeni bir Wordle,<br>hem de kelimesi <span class="highlight">senden!</span></h1>
+        <label class="section-label">5 HARFLİ KELİME ÖNERİNİ GİR:</label>
+        <div class="word-grid" id="wordGrid">
+            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
+            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
+            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
+            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
+            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
+        </div>
+
+        <label class="section-label">BİLGİLERİN:</label>
+        <div class="form-group">
+            <input type="text" id="nameInput" class="main-input" placeholder="Ad Soyad" autocomplete="name">
+            <input type="email" id="emailInput" class="main-input" placeholder="E-mail" autocomplete="email">
+        </div>
+
+        <p class="footer-note">*kelimen yayınlandığı gün senin adın ve soyadınla yayınlanacak, ve ayrıca sana mail ile bunu ulaştıracağız</p>
+        <button class="button" id="submitBtn">Gönder</button>
+    </main>
+
+    <div id="result-screen">
         
-        <div class="content-text">Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın.</div>
-        <div class="content-text">Yeni Wordle Mix'te artık heyecanı sen yaratıyorsun: <span class="highlight-green">Hem çözen hem soran sensin.</span></div>
-        <div class="content-text">Aklındaki 5 harfli kelimeyi gönder, sırası geldiğinde herkes <span class="highlight">senin kelimeni</span> oynasın!</div>
-
-        <div class="form-start-spacer"></div>
-
-        <div class="input-group">
-            <input type="text" id="fullName" class="main-input" placeholder="Ad Soyad" autocomplete="off">
-            <span class="helper-text">Örnek: Günün Kelimesi <span class="bold-name">Can Sorgun</span> tarafından oluşturuldu</span>
-        </div>
-
-        <div class="input-group">
-            <input type="email" id="email" class="main-input" placeholder="E-mail" autocomplete="off">
-            <span class="helper-text">*kelimen yayınlandığında sana haber verebilmemiz için</span>
-        </div>
-
-        <div class="word-section">
-            <div class="word-label">BENİM KELİMEM:</div>
-            <div class="boxes">
-                <div class="box-wrapper"><input type="text" class="letter-box" maxlength="1" inputmode="text"></div>
-                <div class="box-wrapper"><input type="text" class="letter-box" maxlength="1" inputmode="text"></div>
-                <div class="box-wrapper"><input type="text" class="letter-box" maxlength="1" inputmode="text"></div>
-                <div class="box-wrapper"><input type="text" class="letter-box" maxlength="1" inputmode="text"></div>
-                <div class="box-wrapper"><input type="text" class="letter-box" maxlength="1" inputmode="text"></div>
+        <div class="result-visual-wrapper" id="visualWrapper">
+            <div class="game-board">
+                <div id="successRow" style="display:contents;"></div>
+                <div class="faded-rows" id="fadedRows"></div>
             </div>
         </div>
 
-        <div class="spacer"></div>
-        <button class="submit-btn" id="submitBtn">GÖNDER</button>
-    </div>
-
-    <div class="modal-overlay" id="modal">
-        <div class="modal-content">
-            <div class="modal-title">HARİKA!</div>
-            <p style="font-family:'Fuzzy Bubbles'; font-weight:700; margin-bottom:25px;">Kelimeni önerdin. Zamanı geldiğinde sana haber vereceğiz!</p>
-            <button class="submit-btn" style="font-size:1.1rem; padding:14px; width:80%;" onclick="closeAndLock()">TAMAM</button>
+        <div class="success-content">
+            <div class="text-group">
+                <h2 class="success-title">Harikasın!</h2>
+                <p class="success-desc">
+                    Kelimeni sisteme kaydettik.<br>
+                    Kelimen seçilirse, günü geldiğinde sana haber vereceğiz.
+                </p>
+            </div>
+            
+            <button class="button is-active" onclick="location.reload()" style="margin-top: auto;">Bundle'a Dön</button>
         </div>
     </div>
 
-    <script>
-        const boxes = document.querySelectorAll('.letter-box');
-        const modal = document.getElementById('modal');
-        const submitBtn = document.getElementById('submitBtn');
-        const toast = document.getElementById('toast');
-        const nameInput = document.getElementById('fullName');
-        const emailInput = document.getElementById('email');
+</div>
 
-        // Toast Gösterme Fonksiyonu
-        function showToast(msg) {
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+<script>
+    const boxes = document.querySelectorAll('.letter-box');
+    const nameInput = document.getElementById('nameInput');
+    const emailInput = document.getElementById('emailInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const formView = document.getElementById('form-view');
+    const resultScreen = document.getElementById('result-screen');
+    const successRow = document.getElementById('successRow');
+    const fadedRows = document.getElementById('fadedRows');
+    const visualWrapper = document.getElementById('visualWrapper');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // BOŞ IZGARAYI OLUŞTUR (4 Satır x 5 Sütun = 20 Kutu)
+    function createFadedGrid() {
+        fadedRows.innerHTML = '';
+        for (let i = 0; i < 20; i++) {
+            const div = document.createElement('div');
+            div.className = 'empty-grid-box';
+            fadedRows.appendChild(div);
         }
+    }
+    createFadedGrid();
 
-        // Paylaşım
-        document.getElementById('shareBtn').addEventListener('click', async () => {
-            try {
-                if (navigator.share) {
-                    await navigator.share({ title: 'Wordle Mix', url: window.location.href });
-                } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    showToast("Bağlantı Kopyalandı!");
-                }
-            } catch (err) {}
-        });
+    // FORM DURUMUNU KONTROL ET
+    function checkFormState() {
+        const word = Array.from(boxes).map(b => b.value).join('');
+        const isWordComplete = word.length === 5;
+        const isNameValid = nameInput.value.trim().length >= 2;
+        const isEmailValid = emailRegex.test(emailInput.value);
 
-        // Kutu Geçişleri
-        boxes.forEach((box, index) => {
-            box.addEventListener('input', (e) => {
-                const val = e.target.value.toLocaleUpperCase('tr-TR').replace(/[^a-zA-ZÇĞİÖŞÜçğiöşü]/g, "");
-                box.value = val;
-                box.classList.remove('shake');
-                if (val && index < boxes.length - 1) boxes[index + 1].focus();
-            });
-            box.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) boxes[index - 1].focus();
-            });
-        });
+        if (isWordComplete && isNameValid && isEmailValid) {
+            submitBtn.classList.add('is-active');
+        } else {
+            submitBtn.classList.remove('is-active');
+        }
+    }
 
-        // Validasyon ve Gönder
-        submitBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // Sayfa yenilenmesini veya garip tarayıcı davranışlarını engelle
-            
-            const word = Array.from(boxes).map(b => b.value).join('');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            let isValid = true;
-
-            // Önce tüm hataları temizle
-            [nameInput, emailInput, ...boxes].forEach(el => el.classList.remove('shake'));
-
-            // Kontroller
-            if (nameInput.value.trim().length < 2) {
-                nameInput.classList.add('shake');
-                showToast("Ad Soyad çok kısa!");
-                isValid = false;
-            } else if (!emailRegex.test(emailInput.value)) {
-                emailInput.classList.add('shake');
-                showToast("E-mail geçersiz!");
-                isValid = false;
-            } else if (word.length < 5) {
-                boxes.forEach(b => { if(!b.value) b.classList.add('shake'); });
-                showToast("Kelimeyi tamamla!");
-                isValid = false;
+    // INPUT EVENTLERİ
+    boxes.forEach((box, index) => {
+        box.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/[^a-zA-ZÇĞİÖŞÜçğiöşü]/g, "").toLocaleUpperCase('tr-TR');
+            box.value = val;
+            if (val) {
+                box.classList.add('filled');
+                if (index < boxes.length - 1) boxes[index + 1].focus();
+            } else {
+                box.classList.remove('filled');
             }
-
-            if (!isValid) return;
-
-            // Başarılı: Klavyeyi kapat ve animasyonu başlat
-            document.activeElement.blur();
-            submitBtn.disabled = true;
-
-            boxes.forEach((box, i) => {
-                setTimeout(() => box.classList.add('flip-animate'), i * 150);
-            });
-
-            setTimeout(() => modal.style.display = 'flex', 1200);
+            checkFormState();
         });
 
-        function closeAndLock() {
-            modal.style.display = 'none';
-            document.getElementById('pageContent').classList.add('readonly-mode');
-            submitBtn.innerText = "GÖNDERİLDİ";
-            submitBtn.style.background = "#787C7E";
-            document.querySelectorAll('input').forEach(inp => inp.readOnly = true);
-        }
-    </script>
+        box.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace') {
+                if (!box.value && index > 0) boxes[index - 1].focus();
+                setTimeout(() => { if(!box.value) box.classList.remove('filled'); checkFormState(); }, 10);
+            }
+        });
+    });
+
+    [nameInput, emailInput].forEach(input => {
+        input.addEventListener('input', () => {
+            input.value.trim().length > 0 ? input.classList.add('has-value') : input.classList.remove('has-value');
+            checkFormState();
+        });
+    });
+
+    // GÖNDER BUTONU
+    submitBtn.addEventListener('click', () => {
+        if (!submitBtn.classList.contains('is-active')) return;
+
+        const word = Array.from(boxes).map(b => b.value).join('');
+        submitBtn.textContent = "Gönderiliyor...";
+        
+        setTimeout(() => {
+            // 1. Kelimeyi Doldur
+            successRow.innerHTML = '';
+            word.split('').forEach(char => {
+                const div = document.createElement('div');
+                div.className = 'success-box';
+                div.innerText = char;
+                successRow.appendChild(div);
+            });
+
+            // 2. Ekran Değiştir
+            formView.style.display = 'none';
+            resultScreen.style.display = 'flex'; 
+            window.scrollTo(0, 0);
+
+            // 3. Animasyonu Başlat
+            setTimeout(() => {
+                visualWrapper.classList.add('animate-in');
+            }, 50);
+
+        }, 800);
+    });
+
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+        if (navigator.share) {
+            try { await navigator.share({ title: 'Bundle Wordle Mix', url: window.location.href }); } catch (err) {}
+        } else { alert("Link Kopyalandı!"); }
+    });
+</script>
+
 </body>
 </html>
