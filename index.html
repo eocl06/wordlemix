@@ -1,535 +1,1201 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Wordle Mix | Bundle Games</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #F3F0E7;
-            --input-bg: #EAE6D9;
-            --input-border-passive: #D8D4C8;
-            --input-border-active: #000000;
-            --text-main: #111111;
-            
-            --btn-passive-bg: #DCECC4;
-            --btn-passive-text: #8E9C7A;
-            --btn-active-bg: #B8E088;
-            --btn-active-text: #000000;
-            
-            --wordle-green: #75A66E;
-            --grid-empty-border: #E3E1D5;
-            
-            --radius-box: 16px; 
-            --radius-md: 16px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="description" content="Wordle Mix'e 5 harfli kelime öner. Kelimen seçilirse günü geldiğinde herkes senin kelimesini oynasın!" />
+  <meta name="keywords" content="wordle, wordle mix, kelime oyunu, bundle games" />
+  <meta name="author" content="Bundle Games" />
+  <meta property="og:title" content="Wordle Mix - Kelime Öner" />
+  <meta property="og:description" content="Aklındaki 5 harfli kelimeyi gönder, sırası geldiğinde herkes senin kelimesini oynasın!" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#a1de6e" />
+  <title>Wordle Mix - Kelime Öner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Barlow:wght@600&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* Color Variables */
+    :root {
+      --bg-beige: #f3f1e2;
+      --green-primary: #62bd5b;
+      --green-success: #68a963;
+      --border-gray: #c0beb0;
+      --border-dark: #353e45;
+      --text-primary: #151515;
+      --text-secondary: #656456;
+      --text-tertiary: #9c9b8d;
+      --text-black: #000000;
+      --color-white: #ffffff;
+      --surface-primary: #f6f6f6;
+    }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            background: var(--bg-color);
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            color: var(--text-main);
-            overflow: hidden; 
-            touch-action: pan-x pan-y;
-            position: fixed;
-        }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--bg-beige);
+      color: var(--text-black);
+      overflow-x: hidden;
+    }
 
-        .container {
-            max-width: 420px;
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            height: 100dvh;
-            padding: 0 24px 30px;
-            position: relative;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
+    body.success-mode {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
 
-        /* HEADER */
-        #header {
-            padding: 36px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-            width: 100%;
-        }
-        .logo-img { height: 28px; width: auto; display: block; }
-        
-        .share-box {
-            background: transparent;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            font-family: "Inter", sans-serif;
-            font-weight: 700;
-            font-size: 17px;
-            color: #000000;
-            padding: 0;
-        }
-        .share-icon { width: 18px; height: 18px; fill: #000; transform: translateY(1px); }
+    .word-submission-form {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      background-color: var(--bg-beige);
+      position: relative;
+      width: 100%;
+      max-width: 402px;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
 
-        /* FORM STYLES */
-        #form-view {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
+    /* Header Styles */
+    .header {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 402px;
+      padding: 24px 16px 20px;
+      z-index: 10;
+    }
 
-        .main-big-title {
-            font-size: 28px;
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -0.5px;
-            margin-bottom: 24px;
-            color: var(--text-main);
-        }
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
 
-        .hero-wrapper {
-            width: 100%;
-            margin: 8px 0 32px 0;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            flex-shrink: 0;
-        }
-        .hero-wrapper img { width: 100%; height: auto; display: block; }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
 
-        .main-description {
-            font-size: 15px;
-            margin: 0px 0;
-            line-height: 1.5;
-            color: #444;
-            margin-bottom: 32px;
-            font-weight: 500;
-        }
+    .logo-icon-wrapper {
+      position: relative;
+      width: 8.981px;
+      height: 16.329px;
+      margin-right: 7.98px;
+    }
 
-        .section-label {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 12px;
-            display: block;
-            letter-spacing: 0.5px;
-        }
+    .logo-icon-top {
+      position: absolute;
+      top: 0;
+      left: 7.98px;
+      width: 8.981px;
+      height: 16.329px;
+      background: var(--green-primary);
+      border: 1px solid var(--text-black);
+      border-radius: 0 0.938px 0.938px 0.938px;
+    }
 
-        /* 5-Letter Word Grid */
-        .word-grid {
-            display: flex;
-            gap: 8px;
-            justify-content: space-between;
-            margin-bottom: 32px;
-            width: 100%;
-            cursor: text; /* Grid'e tıklayınca input algısı */
-        }
-        .letter-box {
-            width: 18%; aspect-ratio: 1/1;
-            border: 2px solid #D8D4C8; background: transparent;
-            border-radius: var(--radius-box);
-            text-align: center; font-size: 28px; font-weight: 700;
-            text-transform: uppercase; color: var(--text-main);
-            caret-color: transparent; transition: all 0.2s;
-            padding: 0;
-        }
-        .letter-box:focus { outline: none; border-color: #999; }
-        .letter-box.filled {
-            background-color: var(--wordle-green); color: white; border-color: var(--wordle-green);
-            animation: pop 0.3s ease forwards;
-        }
+    .logo-icon-bottom {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 8.981px;
+      height: 9.797px;
+      background: rgba(161, 222, 110, 0.5);
+      border: 1px solid var(--text-black);
+      border-radius: 0.938px 0 0.938px 0.938px;
+    }
 
-        /* Info Inputs */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-        .main-input {
-            width: 100%; height: 52px; padding: 0 20px;
-            border-radius: var(--radius-md); 
-            border: 1px solid var(--input-border-passive);
-            background-color: var(--input-bg);
-            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: var(--text-main);
-            outline: none; transition: all 0.2s;
-        }
-        .main-input:focus, .main-input.has-value {
-            border-color: var(--input-border-active); 
-            background-color: #F8F6F0; 
-        }
+    .logo-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 23px;
+      letter-spacing: -0.5832px;
+      color: var(--text-black);
+    }
 
-        .footer-note {
-            font-size: 11px;
-            color: #888;
-            line-height: 1.4;
-            margin-bottom: 20px;
-        }
+    .mix-badges {
+      display: flex;
+      gap: 0;
+      margin-left: 4px;
+      align-items: center;
+    }
 
-        /* Button */
-        .button {
-            width: 100%; height: 56px; border-radius: 30px;
-            font-weight: 700; font-size: 16px; border: none;
-            margin-top: auto;
-            transition: all 0.3s ease;
-            background-color: var(--btn-passive-bg);
-            color: var(--btn-passive-text);
-            pointer-events: none;
-            flex-shrink: 0;
-            margin-bottom: 10px;
-        }
-        .button.is-active {
-            background-color: var(--btn-active-bg); 
-            color: var(--btn-active-text);
-            pointer-events: auto; cursor: pointer; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .button.is-active:active { transform: scale(0.98); }
+    .mix-badges .badge {
+      width: 18px;
+      height: 18px;
+      display: block;
+      margin-left: -4px;
+      z-index: 3;
+      position: relative;
+    }
 
+    .mix-badges .badge.badge-1 {
+      z-index: 3;
+    }
 
-        /* RESULT SCREEN */
-        #result-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start; 
-            padding-top: 20px;
-            height: 100%;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
+    .mix-badges .badge.badge-2 {
+      z-index: 2;
+    }
 
-        .result-visual-wrapper {
-            position: relative;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transform: translateY(60px); 
-            opacity: 0;
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 1;
-        }
-        
-        .result-visual-wrapper.animate-in {
-            transform: translateY(0);
-            opacity: 1;
-        }
+    .mix-badges .badge.badge-3 {
+      z-index: 1;
+    }
 
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px; 
-            width: 100%;
-            max-width: 340px; 
-            margin-bottom: -150px; 
-            position: relative;
-        }
-        
-        .faded-rows {
-            grid-column: 1 / -1; 
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            opacity: 0.6;
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 90%);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 90%);
-        }
+    .share-button {
+      background: none;
+      border: none;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-black);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5.957px;
+    }
 
-        .success-box {
-            aspect-ratio: 1/1;
-            background-color: var(--wordle-green);
-            color: white; font-weight: 700; font-size: 32px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: var(--radius-box); text-transform: uppercase;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-        }
+    .share-icon {
+      width: 15.77px;
+      height: 13.341px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(180deg) scaleY(-1);
+    }
 
-        .empty-grid-box {
-            aspect-ratio: 1/1;
-            border: 2px solid var(--grid-empty-border);
-            border-radius: var(--radius-box);
-            background: transparent;
-        }
+    .share-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
 
-        .success-content {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-grow: 1; 
-        }
+    /* Form Screen Styles */
+    .form-screen {
+      padding-top: 100px;
+      padding-left: 36px;
+      padding-right: 36px;
+      padding-bottom: 100px;
+      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+      min-height: calc(100vh - 100px);
+      min-height: calc(-webkit-fill-available - 100px);
+    }
 
-        .text-group {
-            margin-top: 0; 
-            padding-top: 20px;
-            background: radial-gradient(ellipse at center, var(--bg-color) 40%, transparent 80%);
-            width: 100%;
-        }
+    .main-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 30px;
+      line-height: 1.13;
+      letter-spacing: -0.6px;
+      color: var(--text-black);
+      margin-bottom: 40px;
+      width: 332px;
+    }
 
-        .success-title {
-            font-size: 40px;
-            font-weight: 900;
-            margin-bottom: 8px;
-            letter-spacing: -1.5px;
-            color: #000;
-            line-height: 1;
-        }
+    /* Description Section */
+    .description-section {
+      margin-bottom: 48px;
+    }
 
-        .success-desc {
-            font-size: 17px;
-            color: #999;
-            line-height: 1.4;
-            font-weight: 500;
-            max-width: 280px;
-            margin: 0 auto;
-        }
+    .description-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      width: 332px;
+    }
 
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        
-    </style>
+    .description-text strong {
+      font-weight: 700;
+    }
+
+    /* Word Input Section */
+    .word-input-section {
+      margin-bottom: 48px;
+      scroll-margin-top: 120px;
+    }
+
+    /* User Info Section */
+    .user-info-section {
+      margin-bottom: 8px;
+      scroll-margin-top: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .section-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--text-primary);
+      text-transform: capitalize;
+      margin-bottom: 16px;
+      width: 330px;
+    }
+
+    .word-input-grid {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .letter-box {
+      width: 63px;
+      height: 63px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      transform-origin: center;
+    }
+
+    .letter-box.empty {
+      border: 1px solid var(--border-gray);
+      background: transparent;
+      transition: border-color 0.2s ease-out, transform 0.2s ease-out;
+    }
+
+    .letter-box.empty:active {
+      transform: scale(0.95);
+    }
+
+    .letter-box.filled {
+      background: var(--green-success);
+      border: 1px solid var(--green-success);
+      animation: fillBoxInstant 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes fillBoxInstant {
+      0% {
+        background: transparent;
+        border-color: var(--border-gray);
+        transform: scale(0.92);
+      }
+      60% {
+        transform: scale(1.03);
+      }
+      100% {
+        background: var(--green-success);
+        border-color: var(--green-success);
+        transform: scale(1);
+      }
+    }
+
+    .letter-input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 26px;
+      color: var(--text-black);
+      outline: none;
+      text-transform: uppercase;
+      cursor: text;
+    }
+
+    .letter-input.filled {
+      color: white;
+    }
+
+    .letter-box.filled .letter-input {
+      color: white;
+      caret-color: white;
+    }
+
+    .letter-box.filled .letter-input::selection {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+
+    /* User Info Form */
+    .user-info-form {
+      margin-bottom: 16px;
+      scroll-margin-top: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .name-input,
+    .email-input {
+      width: 100%;
+      max-width: 332px;
+      padding: 20px 21px;
+      border: 1px solid var(--border-gray);
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: var(--text-black);
+      background: var(--bg-beige);
+      outline: none;
+      transition: border-color 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      scroll-margin-top: 120px;
+      scroll-margin-bottom: 100px;
+      box-sizing: border-box;
+    }
+
+    .name-input::placeholder,
+    .email-input::placeholder {
+      color: #9b9b9b;
+      font-weight: 400;
+    }
+
+    .name-input.filled,
+    .email-input.filled {
+      border-color: var(--border-dark);
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: -0.28px;
+    }
+
+    .name-input:focus,
+    .email-input:focus {
+      border-color: var(--border-dark);
+    }
+
+    .name-input.error,
+    .email-input.error {
+      border-color: #e74c3c;
+    }
+
+    .error-message {
+      display: block;
+      color: #e74c3c;
+      font-size: 12px;
+      margin-top: 4px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--text-tertiary);
+      width: 332px;
+      margin-top: -8px;
+      margin-bottom: 32px;
+    }
+
+    /* Submit Button */
+    .submit-button {
+      width: 345px;
+      max-width: 100%;
+      padding: 9px 79px;
+      background: var(--green-primary);
+      border: none;
+      border-radius: 52px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--color-white);
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      line-height: 36.781px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .submit-button.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .submit-button.enabled {
+      opacity: 1;
+    }
+
+    .submit-button:hover:not(.disabled) {
+      opacity: 0.9;
+    }
+
+    .submit-button:active:not(.disabled) {
+      transform: scale(0.98);
+    }
+
+    /* Error Banner */
+    .error-banner {
+      width: 100%;
+      max-width: 345px;
+      margin: 0 auto 20px;
+      padding: 12px 20px;
+      background: #fee;
+      border: 1px solid #fcc;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .error-banner-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #e74c3c;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Success Screen */
+    .success-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100vh;
+      max-width: 402px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0;
+      background: var(--bg-beige);
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 100;
+      box-sizing: border-box;
+    }
+
+    .success-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3.637px;
+      justify-content: center;
+      margin-bottom: -30px;
+      margin-top: 40px;
+      width: 100%;
+      max-width: 307px;
+    }
+
+    .grid-cell {
+      width: 58px;
+      height: 58px;
+      border-radius: 18.187px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 23.644px;
+      letter-spacing: -0.4729px;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .grid-cell.filled {
+      background: var(--green-primary);
+      color: white;
+    }
+
+    .grid-cell.empty {
+      background: var(--bg-beige);
+      border: 1px solid var(--border-gray);
+    }
+
+    .success-message {
+      text-align: center;
+      width: 100%;
+      max-width: 323px;
+      margin-top: 0;
+      margin-bottom: 40px;
+    }
+
+    .success-heading {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 44px;
+      line-height: 1.13;
+      letter-spacing: -0.88px;
+      color: var(--text-black);
+      margin-bottom: 6px;
+      margin-top: 0;
+      width: 100%;
+    }
+
+    .success-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 1.3;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+      width: 100%;
+    }
+
+    .success-info {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--text-tertiary);
+      margin-bottom: 0;
+      margin-top: 0;
+      width: 100%;
+      max-width: 332px;
+    }
+
+    .return-button {
+      width: 100%;
+      max-width: 345px;
+      padding: 9px 79px;
+      background: var(--green-primary);
+      border: none;
+      border-radius: 52px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--color-white);
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      line-height: 36.781px;
+      margin-top: 80px;
+      box-sizing: border-box;
+    }
+
+    .return-button:hover {
+      opacity: 0.9;
+    }
+
+    .return-button:active {
+      transform: scale(0.98);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 402px) {
+      .word-submission-form {
+        max-width: 100%;
+      }
+      
+      .form-screen,
+      .success-screen {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      
+      .main-title,
+      .description-text,
+      .name-input,
+      .email-input,
+      .disclaimer {
+        width: 100%;
+        max-width: 332px;
+      }
+      
+      .user-info-section {
+        align-items: flex-start;
+      }
+      
+      .user-info-form {
+        align-items: center;
+      }
+      
+      .input-group {
+        width: 100%;
+        align-items: center;
+      }
+      
+      .submit-button,
+      .return-button {
+        width: 100%;
+        max-width: 345px;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<div class="container" id="App">
-    
-    <header id="header">
-        <a href="#"><img src="https://i.ibb.co/4n55kpBQ/Wordle-Mix-Logo-1.png" alt="Wordle Mix Logo" class="logo-img"></a>
-        <button class="share-box" id="shareBtn">
-            Paylaş
-            <svg class="share-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 5V9C7 9 4 14 3 19C5.5 15.5 9 13.9 14 13.9V17.9L21 11.45L14 5Z" fill="currentColor"/>
-            </svg>
+  <div class="word-submission-form" id="app">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="logo-container">
+          <div class="logo-icon-wrapper">
+            <div class="logo-icon-top"></div>
+            <div class="logo-icon-bottom"></div>
+          </div>
+          <span class="logo-text">WORDLE</span>
+          <div class="mix-badges">
+            <img src="https://www.figma.com/api/mcp/asset/900d4b37-9a0c-4500-97b6-a69ae118ab6e" alt="M" class="badge badge-1" />
+            <img src="https://www.figma.com/api/mcp/asset/1a7005e3-1c4b-4a3b-afda-d708b1c9bf22" alt="I" class="badge badge-2" />
+            <img src="https://www.figma.com/api/mcp/asset/7208495f-30d0-4b99-a1a0-06dfcebd1c1c" alt="X" class="badge badge-3" />
+          </div>
+        </div>
+        <button class="share-button" id="shareButton">
+          <span>Paylaş</span>
+          <div class="share-icon">
+            <img src="https://www.figma.com/api/mcp/asset/132057ac-1ad9-4b04-a16d-10303538fd72" alt="Share" />
+          </div>
         </button>
-    </header>
-
-    <main id="form-view">
-        <h1 class="main-big-title">Bundle Games’e yeni<br>oyun: Wordle Mix</h1>
-        <div class="hero-wrapper"><img src="https://i.ibb.co/VYhtFZdS/Twitter-post-1.png" alt="Bundle Wordle Mix"></div>
-        <p class="main-description">
-            Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın. Yeni Wordle Mix’te ise artık <b>heyecanı sen yaratıyorsun:</b><br><br>
-            Aklındaki <b>5 harfli kelimeyi gönder</b>, günü geldiğinde herkes senin kelimeni oynasın!
-        </p>
-
-        <label class="section-label">5 Harfli Kelime Önerini Gir:</label>
-        <div class="word-grid" id="wordGrid">
-            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
-            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
-            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
-            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
-            <input type="text" class="letter-box" maxlength="1" inputmode="text" autocomplete="off">
-        </div>
-
-        <label class="section-label">Bilgilerin:</label>
-        <div class="form-group">
-            <input type="text" id="nameInput" class="main-input" placeholder="Ad Soyad" autocomplete="name">
-            <input type="email" id="emailInput" class="main-input" placeholder="E-mail" autocomplete="email">
-        </div>
-
-        <p class="footer-note">*kelimen yayınlandığı gün senin adın ve soyadınla yayınlanacak, ve ayrıca sana mail ile bunu ulaştıracağız</p>
-        <button class="button" id="submitBtn">Gönder</button>
-    </main>
-
-    <div id="result-screen">
-        
-        <div class="result-visual-wrapper" id="visualWrapper">
-            <div class="game-board">
-                <div id="successRow" style="display:contents;"></div>
-                <div class="faded-rows" id="fadedRows"></div>
-            </div>
-        </div>
-
-        <div class="success-content">
-            <div class="text-group">
-                <h2 class="success-title">Harikasın!</h2>
-                <p class="success-desc">
-                    Kelimeni sisteme kaydettik.<br>
-                    Kelimen seçilirse, günü geldiğinde sana haber vereceğiz.
-                </p>
-            </div>
-            
-            <button class="button is-active" onclick="location.reload()" style="margin-top: auto;">Bundle'a Dön</button>
-        </div>
+      </div>
     </div>
 
-</div>
+    <!-- Form Screen -->
+    <div class="form-screen" id="formScreen">
+      <h1 class="main-title">
+        Bundle Games'e yeni oyun: Wordle Mix
+      </h1>
 
-<script>
-    const boxes = document.querySelectorAll('.letter-box');
+      <div class="description-section">
+        <p class="description-text">
+          Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın. Yeni Wordle Mix'te ise artık{' '}
+          <strong>heyecanı sen yaratıyorsun</strong>:
+        </p>
+        <p class="description-text">
+          <strong>Aklındaki 5 harfli kelimeyi gönder</strong>, günü geldiğinde herkes senin kelimeni oynasın!
+        </p>
+      </div>
+
+      <div class="word-input-section">
+        <h2 class="section-label">5 Harfli Kelime Önerini Gir:</h2>
+        <div class="word-input-grid" id="wordInputGrid"></div>
+        <span class="error-message" id="wordError" style="display: none;"></span>
+      </div>
+
+      <div class="user-info-section">
+        <h2 class="section-label">Bilgilerin:</h2>
+        <div class="user-info-form">
+          <div class="input-group">
+            <input
+              type="text"
+              class="name-input"
+              id="nameInput"
+              placeholder="Ad Soyad"
+              aria-label="Name"
+            />
+            <span class="error-message" id="nameError" style="display: none;"></span>
+          </div>
+          
+          <div class="input-group">
+            <input
+              type="email"
+              class="email-input"
+              id="emailInput"
+              placeholder="E-mail"
+              aria-label="Email"
+            />
+            <span class="error-message" id="emailError" style="display: none;"></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="disclaimer">
+        *Önerdiğin kelime, yıl içerisinde günün kelimesi olarak adın ve soyadınla birlikte oyunda yer alacak. O gün geldiğinde seni e-posta ile bilgilendireceğiz.
+      </p>
+
+      <div class="error-banner" id="errorBanner" style="display: none;">
+        <p class="error-banner-text" id="errorBannerText"></p>
+      </div>
+
+      <button
+        class="submit-button disabled"
+        id="submitButton"
+        aria-label="Formu gönder"
+      >
+        Gönder
+      </button>
+    </div>
+
+    <!-- Success Screen -->
+    <div class="success-screen" id="successScreen" style="display: none;">
+      <div class="success-grid" id="successGrid"></div>
+      <div class="success-message">
+        <h1 class="success-heading">Harikasın!</h1>
+        <p class="success-subtitle">Kelimeni sisteme kaydettik.</p>
+        <p class="success-info">
+          Kelimen seçilirse oyunda yer aldığı gün seni e-posta ile bilgilendireceğiz.
+        </p>
+        <button class="return-button" id="returnButton">
+          Bundle'a Dön
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Image URLs
+    const images = {
+      mixBadge1: "https://www.figma.com/api/mcp/asset/900d4b37-9a0c-4500-97b6-a69ae118ab6e",
+      mixBadge2: "https://www.figma.com/api/mcp/asset/1a7005e3-1c4b-4a3b-afda-d708b1c9bf22",
+      mixBadge3: "https://www.figma.com/api/mcp/asset/7208495f-30d0-4b99-a1a0-06dfcebd1c1c",
+      shareArrow: "https://www.figma.com/api/mcp/asset/132057ac-1ad9-4b04-a16d-10303538fd72"
+    };
+
+    // Constants
+    const TURKISH_LETTERS = /^[A-Za-zÇĞİÖŞÜçğıöşü]+$/;
+
+    // State
+    const state = {
+      word: [],
+      name: '',
+      email: '',
+      isSubmitting: false,
+      submissionStatus: 'idle',
+      errors: {}
+    };
+
+    // Validation functions
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    function validateWord(word) {
+      if (word.length !== 5) return false;
+      const wordStr = word.join('');
+      return TURKISH_LETTERS.test(wordStr) && wordStr.length === 5;
+    }
+
+    function validateName(name) {
+      return name.trim().length >= 2;
+    }
+
+    // Derived state
+    function getDerivedState() {
+      const wordLength = state.word.length;
+      const isWordComplete = wordLength === 5;
+      const isWordValid = validateWord(state.word);
+      const isNameValid = validateName(state.name);
+      const isEmailValid = validateEmail(state.email);
+      const isFormValid = isWordValid && isNameValid && isEmailValid;
+      
+      const submitEnabled = 
+        isWordComplete && 
+        isFormValid && 
+        !state.isSubmitting && 
+        state.submissionStatus !== 'success';
+
+      let currentUIState = 'empty';
+      if (state.submissionStatus === 'success') {
+        currentUIState = 'success';
+      } else if (wordLength === 0) {
+        currentUIState = 'empty';
+      } else if (wordLength < 5) {
+        currentUIState = 'typing';
+      } else if (wordLength === 5 && isFormValid) {
+        currentUIState = 'ready';
+      }
+
+      return {
+        wordLength,
+        isWordComplete,
+        isFormValid,
+        submitEnabled,
+        currentUIState
+      };
+    }
+
+    // DOM elements
+    const formScreen = document.getElementById('formScreen');
+    const successScreen = document.getElementById('successScreen');
+    const wordInputGrid = document.getElementById('wordInputGrid');
     const nameInput = document.getElementById('nameInput');
     const emailInput = document.getElementById('emailInput');
-    const submitBtn = document.getElementById('submitBtn');
-    const formView = document.getElementById('form-view');
-    const resultScreen = document.getElementById('result-screen');
-    const successRow = document.getElementById('successRow');
-    const fadedRows = document.getElementById('fadedRows');
-    const visualWrapper = document.getElementById('visualWrapper');
-    const wordGrid = document.getElementById('wordGrid');
+    const submitButton = document.getElementById('submitButton');
+    const wordError = document.getElementById('wordError');
+    const nameError = document.getElementById('nameError');
+    const emailError = document.getElementById('emailError');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorBannerText = document.getElementById('errorBannerText');
+    const successGrid = document.getElementById('successGrid');
+    const returnButton = document.getElementById('returnButton');
+    const shareButton = document.getElementById('shareButton');
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Input refs for word grid
+    const inputRefs = [];
+    const boxRefs = [];
+    let gridInitialized = false;
 
-    // BOŞ IZGARAYI OLUŞTUR (Görsel amaçlı alttaki flu alan)
-    function createFadedGrid() {
-        fadedRows.innerHTML = '';
-        for (let i = 0; i < 20; i++) {
-            const div = document.createElement('div');
-            div.className = 'empty-grid-box';
-            fadedRows.appendChild(div);
-        }
-    }
-    createFadedGrid();
-
-    // FORM DOĞRULAMA
-    function checkFormState() {
-        const word = Array.from(boxes).map(b => b.value).join('');
-        const isWordComplete = word.length === 5;
-        const isNameValid = nameInput.value.trim().length >= 2;
-        const isEmailValid = emailRegex.test(emailInput.value);
-
-        if (isWordComplete && isNameValid && isEmailValid) {
-            submitBtn.classList.add('is-active');
-        } else {
-            submitBtn.classList.remove('is-active');
-        }
-    }
-
-    // ODAK YÖNETİMİ (Stack Mantığı: Her zaman ilk boş kutuya git)
-    function focusNextEmpty() {
-        const emptyIndex = Array.from(boxes).findIndex(box => box.value === '');
-        if (emptyIndex !== -1) {
-            boxes[emptyIndex].focus();
-        } else {
-            boxes[boxes.length - 1].focus();
-        }
-    }
-
-    // GLOBAL SİLME MANTIĞI (Sondan sil)
-    function deleteLastChar() {
-        // Dolu olan kutuları filtrele
-        const filledBoxes = Array.from(boxes).filter(box => box.value !== '');
+    // Initialize word input grid (only once)
+    function initWordGrid() {
+      if (gridInitialized) return;
+      
+      wordInputGrid.innerHTML = '';
+      inputRefs.length = 0;
+      boxRefs.length = 0;
+      
+      for (let i = 0; i < 5; i++) {
+        const box = document.createElement('div');
+        box.className = 'letter-box empty';
         
-        if (filledBoxes.length > 0) {
-            // En sondaki dolu kutuyu bul ve sil
-            const lastFilledBox = filledBoxes[filledBoxes.length - 1];
-            lastFilledBox.value = '';
-            lastFilledBox.classList.remove('filled');
-            lastFilledBox.focus();
-        } else {
-            // Hiçbiri dolu değilse en başa odaklan
-            boxes[0].focus();
-        }
-        checkFormState();
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 1;
+        input.value = '';
+        input.className = 'letter-input';
+        input.setAttribute('aria-label', `Letter ${i + 1} of 5`);
+        input.autocomplete = 'off';
+        
+        inputRefs[i] = input;
+        boxRefs[i] = box;
+        
+        input.addEventListener('input', (e) => handleWordInput(i, e.target.value));
+        input.addEventListener('keydown', (e) => handleWordKeyDown(i, e));
+        input.addEventListener('focus', () => handleWordFocus(i));
+        
+        box.addEventListener('click', () => {
+          if (inputRefs[i]) {
+            inputRefs[i].focus();
+          }
+        });
+        
+        box.appendChild(input);
+        wordInputGrid.appendChild(box);
+      }
+      
+      gridInitialized = true;
     }
 
-    // INPUT EVENT LISTENERS
-    boxes.forEach((box, index) => {
+    // Update word grid (only update changed boxes, don't recreate)
+    function updateWordGrid() {
+      for (let i = 0; i < 5; i++) {
+        const letter = state.word[i] || '';
+        const isFilled = !!letter;
+        const box = boxRefs[i];
+        const input = inputRefs[i];
         
-        // Kutuya tıklanırsa (focus olursa) zorla doğru sıraya at
-        box.addEventListener('focus', (e) => {
-            setTimeout(() => {
-                const emptyIndex = Array.from(boxes).findIndex(b => b.value === '');
-                // Eğer tıklanan kutu, ilk boş kutudan sonraysa, ilk boş kutuya odakla
-                if (emptyIndex !== -1 && index > emptyIndex) {
-                    boxes[emptyIndex].focus();
-                }
-            }, 0);
-        });
+        if (box && input) {
+          // Only update if state changed
+          if (input.value !== letter) {
+            input.value = letter;
+          }
+          
+          // Update box class only if it changed
+          const shouldBeFilled = box.classList.contains('filled');
+          if (isFilled !== shouldBeFilled) {
+            box.className = `letter-box ${isFilled ? 'filled' : 'empty'}`;
+            input.className = `letter-input ${isFilled ? 'filled' : ''}`;
+          }
+        }
+      }
+    }
 
-        // Harf Girişi
-        box.addEventListener('input', (e) => {
-            let val = e.target.value.replace(/[^a-zA-ZÇĞİÖŞÜçğiöşü]/g, "").toLocaleUpperCase('tr-TR');
-            
-            // Tek seferde birden fazla harf girilirse sadece ilkini al
-            if (val.length > 1) val = val[0];
-            
-            box.value = val;
+    function handleWordInput(index, value) {
+      const letter = value.slice(-1).toLocaleUpperCase('tr-TR');
+      if (letter && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(letter)) {
+        updateWord(index, letter);
+        if (index < 4 && inputRefs[index + 1]) {
+          inputRefs[index + 1].focus();
+        }
+      } else if (value === '') {
+        updateWord(index, '');
+      }
+    }
 
-            if (val) {
-                box.classList.add('filled');
-                // Dolduysa sonrakine geç
-                if (index < boxes.length - 1) {
-                    boxes[index + 1].focus();
-                }
-            } else {
-                box.classList.remove('filled');
-            }
-            checkFormState();
-        });
+    function handleWordKeyDown(index, e) {
+      if (e.key === 'Backspace') {
+        if (state.word[index]) {
+          updateWord(index, '');
+        } else if (index > 0) {
+          inputRefs[index - 1].focus();
+          updateWord(index - 1, '');
+        }
+      }
+    }
 
-        // Silme Tuşu Kontrolü
-        box.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace') {
-                e.preventDefault(); // Standart silmeyi durdur
-                deleteLastChar();   // Özel silme fonksiyonunu çağır
-            }
+    function handleWordFocus(index) {
+      scrollIntoViewIfNeeded(inputRefs[index]);
+    }
+
+    function scrollIntoViewIfNeeded(element) {
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.visualViewport?.height || window.innerHeight;
+      const isVisible = rect.top >= 0 && rect.bottom <= viewportHeight;
+      
+      if (!isVisible) {
+        requestAnimationFrame(() => {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'nearest',
+          });
         });
+      }
+    }
+
+    // Handle paste for word grid
+    wordInputGrid.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pastedText = e.clipboardData.getData('text').toLocaleUpperCase('tr-TR').slice(0, 5);
+      pastedText.split('').forEach((letter, index) => {
+        if (index < 5 && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(letter)) {
+          updateWord(index, letter);
+        }
+      });
     });
 
-    // Grid alanına boşluğa tıklanırsa da inputa odaklan
-    wordGrid.addEventListener('click', () => {
-        focusNextEmpty();
-    });
+    // Update functions
+    function updateWord(index, letter) {
+      const newWord = [...state.word];
+      if (letter) {
+        const upperLetter = letter.toLocaleUpperCase('tr-TR');
+        if (TURKISH_LETTERS.test(upperLetter)) {
+          newWord[index] = upperLetter;
+        }
+      } else {
+        newWord[index] = '';
+      }
+      const filteredWord = newWord.filter(l => l !== '');
+      state.word = filteredWord.slice(0, 5);
+      state.errors.word = undefined;
+      updateUI();
+    }
 
-    // İsim ve Mail input kontrolü
-    [nameInput, emailInput].forEach(input => {
-        input.addEventListener('input', () => {
-            input.value.trim().length > 0 ? input.classList.add('has-value') : input.classList.remove('has-value');
-            checkFormState();
-        });
-    });
+    function updateName(name) {
+      state.name = name;
+      state.errors.name = undefined;
+      updateUI();
+    }
 
-    // GÖNDERME İŞLEMİ
-    submitBtn.addEventListener('click', () => {
-        if (!submitBtn.classList.contains('is-active')) return;
+    function updateEmail(email) {
+      state.email = email;
+      state.errors.email = undefined;
+      updateUI();
+    }
 
-        const word = Array.from(boxes).map(b => b.value).join('');
-        submitBtn.textContent = "Gönderiliyor...";
+    // Update UI based on state
+    function updateUI() {
+      const derived = getDerivedState();
+      
+      // Initialize word grid if not already done
+      initWordGrid();
+      // Update word grid (only changes, doesn't recreate)
+      updateWordGrid();
+      
+      // Update name input
+      nameInput.value = state.name;
+      nameInput.className = `name-input ${state.name ? 'filled' : ''} ${state.errors.name ? 'error' : ''}`;
+      if (state.errors.name) {
+        nameError.textContent = state.errors.name;
+        nameError.style.display = 'block';
+      } else {
+        nameError.style.display = 'none';
+      }
+      
+      // Update email input
+      emailInput.value = state.email;
+      emailInput.className = `email-input ${state.email ? 'filled' : ''} ${state.errors.email ? 'error' : ''}`;
+      if (state.errors.email) {
+        emailError.textContent = state.errors.email;
+        emailError.style.display = 'block';
+      } else {
+        emailError.style.display = 'none';
+      }
+      
+      // Update submit button
+      if (derived.submitEnabled) {
+        submitButton.classList.remove('disabled');
+        submitButton.classList.add('enabled');
+        submitButton.disabled = false;
+      } else {
+        submitButton.classList.remove('enabled');
+        submitButton.classList.add('disabled');
+        submitButton.disabled = true;
+      }
+      
+      if (state.isSubmitting) {
+        submitButton.textContent = 'Gönderiliyor...';
+      } else {
+        submitButton.textContent = 'Gönder';
+      }
+      
+      // Show/hide error banner
+      if (state.submissionStatus === 'error') {
+        errorBanner.style.display = 'block';
+        errorBannerText.textContent = state.errors.word || 'Bir hata oluştu. Lütfen tekrar deneyin.';
+      } else {
+        errorBanner.style.display = 'none';
+      }
+      
+      // Show success screen
+      if (derived.currentUIState === 'success') {
+        formScreen.style.display = 'none';
+        successScreen.style.display = 'flex';
+        document.body.classList.add('success-mode');
+        renderSuccessGrid();
+      } else {
+        formScreen.style.display = 'block';
+        successScreen.style.display = 'none';
+        document.body.classList.remove('success-mode');
+      }
+    }
+
+    // Render success grid
+    function renderSuccessGrid() {
+      const wordString = state.word.join('');
+      const totalBoxes = 25;
+      const boxes = [];
+      
+      wordString.split('').forEach(letter => {
+        boxes.push({ letter, isFilled: true, opacity: 1 });
+      });
+      
+      const opacities = [0.7, 0.5, 0.3, 0.1];
+      for (let i = 5; i < totalBoxes; i++) {
+        const rowIndex = Math.floor((i - 5) / 5);
+        boxes.push({ letter: '', isFilled: false, opacity: opacities[rowIndex] });
+      }
+      
+      successGrid.innerHTML = '';
+      boxes.forEach((box, index) => {
+        const cell = document.createElement('div');
+        cell.className = `grid-cell ${box.isFilled ? 'filled' : 'empty'}`;
+        cell.style.opacity = box.isFilled ? 1 : box.opacity;
+        cell.textContent = box.letter;
+        successGrid.appendChild(cell);
+      });
+    }
+
+    // Submit form
+    async function submitForm() {
+      const wordError = validateWord(state.word) ? undefined : 'Kelime tam olarak 5 harf olmalıdır';
+      const nameError = validateName(state.name) ? undefined : 'İsim en az 2 karakter olmalıdır';
+      const emailError = validateEmail(state.email) ? undefined : 'Lütfen geçerli bir e-posta adresi girin';
+
+      if (wordError || nameError || emailError) {
+        state.errors = { word: wordError, name: nameError, email: emailError };
+        updateUI();
+        return;
+      }
+
+      state.isSubmitting = true;
+      state.submissionStatus = 'submitting';
+      updateUI();
+
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
+        // In real implementation, call actual API:
+        // const response = await fetch('/api/word-submission', {
+        //   method: 'POST',
+        //   body: JSON.stringify({
+        //     word: state.word.join(''),
+        //     name: state.name,
+        //     email: state.email,
+        //   }),
+        // });
+
+        state.isSubmitting = false;
+        state.submissionStatus = 'success';
+        updateUI();
+      } catch (error) {
+        state.isSubmitting = false;
+        state.submissionStatus = 'error';
+        state.errors = { 
+          word: 'Gönderim başarısız oldu. Lütfen tekrar deneyin.',
+          name: undefined,
+          email: undefined,
+        };
+        updateUI();
+      }
+    }
+
+    // Handle return button
+    function handleReturn() {
+      window.location.href = 'https://www.bundle.app/tr/gundem';
+    }
+
+    // Handle share button
+    async function handleShare() {
+      const shareData = {
+        title: 'Wordle Mix - Bundle Games',
+        text: 'Bundle Games\'e yeni oyun: Wordle Mix! Aklındaki 5 harfli kelimeyi gönder, sırası geldiğinde herkes senin kelimeni oynasın!',
+        url: window.location.href,
+      };
+
+      try {
+        if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+        } else {
+          await navigator.clipboard.writeText(window.location.href);
+          alert('Link kopyalandı!');
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            alert('Link kopyalandı!');
+          } catch (clipboardError) {
+            console.error('Paylaşım hatası:', error);
+          }
+        }
+      }
+    }
+
+    // Scroll into view for name/email inputs
+    function scrollIntoViewForInput(element) {
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.visualViewport?.height || window.innerHeight;
+      const isVisible = rect.top >= 0 && rect.bottom <= viewportHeight;
+      
+      if (!isVisible) {
         setTimeout(() => {
-            // Sonuç ekranına kelimeyi yaz
-            successRow.innerHTML = '';
-            word.split('').forEach(char => {
-                const div = document.createElement('div');
-                div.className = 'success-box';
-                div.innerText = char;
-                successRow.appendChild(div);
-            });
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'nearest',
+          });
+        }, 200);
+      }
+    }
 
-            // Ekran geçişi
-            formView.style.display = 'none';
-            resultScreen.style.display = 'flex'; 
-            window.scrollTo(0, 0);
-
-            // Animasyon
-            setTimeout(() => {
-                visualWrapper.classList.add('animate-in');
-            }, 50);
-
-        }, 800);
+    // Event listeners
+    nameInput.addEventListener('input', (e) => {
+      updateName(e.target.value);
+    });
+    
+    nameInput.addEventListener('focus', () => {
+      scrollIntoViewForInput(nameInput);
     });
 
-    // Paylaş Butonu
-    document.getElementById('shareBtn').addEventListener('click', async () => {
-        if (navigator.share) {
-            try { await navigator.share({ title: 'Bundle Wordle Mix', url: window.location.href }); } catch (err) {}
-        } else { alert("Link Kopyalandı!"); }
+    emailInput.addEventListener('input', (e) => {
+      updateEmail(e.target.value);
     });
-</script>
+    
+    emailInput.addEventListener('focus', () => {
+      scrollIntoViewForInput(emailInput);
+    });
 
+    submitButton.addEventListener('click', submitForm);
+    returnButton.addEventListener('click', handleReturn);
+    shareButton.addEventListener('click', handleShare);
+
+    // Initialize
+    updateUI();
+  </script>
 </body>
 </html>
