@@ -669,7 +669,7 @@
 
       <div class="description-section">
         <p class="description-text">
-          Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın. Yeni Wordle Mix'te ise artık{' '}
+          Bugüne kadar sayısız kez o 5 kutucuğa baktın ve doğru kelimeyi bulmaya çalıştın. Yeni Wordle Mix'te ise artık
           <strong>heyecanı sen yaratıyorsun</strong>:
         </p>
         <p class="description-text">
@@ -886,8 +886,9 @@
         const input = inputRefs[i];
         
         if (box && input) {
-          // Only update if state changed
-          if (input.value !== letter) {
+          // Only update input value if it's different (avoid unnecessary DOM updates)
+          const currentValue = input.value.toLocaleUpperCase('tr-TR');
+          if (currentValue !== letter) {
             input.value = letter;
           }
           
@@ -901,25 +902,100 @@
       }
     }
 
-    function handleWordInput(index, value) {
-      const letter = value.slice(-1).toLocaleUpperCase('tr-TR');
-      if (letter && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(letter)) {
-        updateWord(index, letter);
-        if (index < 4 && inputRefs[index + 1]) {
-          inputRefs[index + 1].focus();
+    // Optimized word update - only updates UI for changed box
+    function updateWordBox(index, letter) {
+      const isFilled = !!letter;
+      const box = boxRefs[index];
+      const input = inputRefs[index];
+      
+      if (box && input) {
+        // Update input value
+        input.value = letter;
+        
+        // Update box class only if it changed
+        const currentlyFilled = box.classList.contains('filled');
+        if (isFilled !== currentlyFilled) {
+          box.className = `letter-box ${isFilled ? 'filled' : 'empty'}`;
+          input.className = `letter-input ${isFilled ? 'filled' : ''}`;
         }
+      }
+    }
+
+    function handleWordInput(index, value) {
+      // Prevent default to avoid conflicts
+      const letter = value.slice(-1).toLocaleUpperCase('tr-TR');
+      
+      if (letter && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(letter)) {
+        // Update state directly
+        const newWord = [...state.word];
+        newWord[index] = letter;
+        const filteredWord = newWord.filter(l => l !== '');
+        state.word = filteredWord.slice(0, 5);
+        state.errors.word = undefined;
+        
+        // Update only the changed box immediately
+        updateWordBox(index, letter);
+        
+        // Move to next box
+        if (index < 4 && inputRefs[index + 1]) {
+          setTimeout(() => {
+            inputRefs[index + 1].focus();
+          }, 0);
+        }
+        
+        // Update other UI elements (button, etc.) without touching word grid
+        updateUIWithoutWordGrid();
       } else if (value === '') {
-        updateWord(index, '');
+        // Clear current box
+        const newWord = [...state.word];
+        newWord[index] = '';
+        const filteredWord = newWord.filter(l => l !== '');
+        state.word = filteredWord.slice(0, 5);
+        state.errors.word = undefined;
+        
+        // Update only the changed box immediately
+        updateWordBox(index, '');
+        
+        // Update other UI elements
+        updateUIWithoutWordGrid();
       }
     }
 
     function handleWordKeyDown(index, e) {
       if (e.key === 'Backspace') {
+        e.preventDefault();
+        
         if (state.word[index]) {
-          updateWord(index, '');
+          // Clear current box
+          const newWord = [...state.word];
+          newWord[index] = '';
+          const filteredWord = newWord.filter(l => l !== '');
+          state.word = filteredWord.slice(0, 5);
+          state.errors.word = undefined;
+          
+          // Update only the changed box immediately
+          updateWordBox(index, '');
+          
+          // Update other UI elements
+          updateUIWithoutWordGrid();
         } else if (index > 0) {
-          inputRefs[index - 1].focus();
-          updateWord(index - 1, '');
+          // Move to previous box and clear it
+          const newWord = [...state.word];
+          newWord[index - 1] = '';
+          const filteredWord = newWord.filter(l => l !== '');
+          state.word = filteredWord.slice(0, 5);
+          state.errors.word = undefined;
+          
+          // Update the previous box
+          updateWordBox(index - 1, '');
+          
+          // Focus previous box
+          setTimeout(() => {
+            inputRefs[index - 1].focus();
+          }, 0);
+          
+          // Update other UI elements
+          updateUIWithoutWordGrid();
         }
       }
     }
@@ -949,11 +1025,27 @@
     wordInputGrid.addEventListener('paste', (e) => {
       e.preventDefault();
       const pastedText = e.clipboardData.getData('text').toLocaleUpperCase('tr-TR').slice(0, 5);
+      const newWord = [];
+      
       pastedText.split('').forEach((letter, index) => {
         if (index < 5 && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(letter)) {
-          updateWord(index, letter);
+          newWord[index] = letter;
+          updateWordBox(index, letter);
         }
       });
+      
+      state.word = newWord;
+      state.errors.word = undefined;
+      
+      // Focus the next empty box or last box
+      const nextIndex = Math.min(newWord.length, 4);
+      setTimeout(() => {
+        if (inputRefs[nextIndex]) {
+          inputRefs[nextIndex].focus();
+        }
+      }, 0);
+      
+      updateUIWithoutWordGrid();
     });
 
     // Update functions
@@ -971,6 +1063,36 @@
       state.word = filteredWord.slice(0, 5);
       state.errors.word = undefined;
       updateUI();
+    }
+
+    // Update UI without touching word grid (for performance)
+    function updateUIWithoutWordGrid() {
+      const derived = getDerivedState();
+      
+      // Update submit button
+      if (derived.submitEnabled) {
+        submitButton.classList.remove('disabled');
+        submitButton.classList.add('enabled');
+        submitButton.disabled = false;
+      } else {
+        submitButton.classList.remove('enabled');
+        submitButton.classList.add('disabled');
+        submitButton.disabled = true;
+      }
+      
+      if (state.isSubmitting) {
+        submitButton.textContent = 'Gönderiliyor...';
+      } else {
+        submitButton.textContent = 'Gönder';
+      }
+      
+      // Show/hide error banner
+      if (state.submissionStatus === 'error') {
+        errorBanner.style.display = 'block';
+        errorBannerText.textContent = state.errors.word || 'Bir hata oluştu. Lütfen tekrar deneyin.';
+      } else {
+        errorBanner.style.display = 'none';
+      }
     }
 
     function updateName(name) {
@@ -991,8 +1113,11 @@
       
       // Initialize word grid if not already done
       initWordGrid();
-      // Update word grid (only changes, doesn't recreate)
-      updateWordGrid();
+      // Only update word grid if we're not in the middle of typing (to avoid conflicts)
+      // Word grid is updated directly in handleWordInput/handleWordKeyDown for better performance
+      if (state.word.length === 0 || state.submissionStatus === 'success') {
+        updateWordGrid();
+      }
       
       // Update name input
       nameInput.value = state.name;
