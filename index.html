@@ -922,13 +922,18 @@
     }
 
     function handleWordInput(index, value) {
-      // Prevent default to avoid conflicts
       const letter = value.slice(-1).toLocaleUpperCase('tr-TR');
       
       if (letter && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(letter)) {
-        // Update state directly
-        const newWord = [...state.word];
+        // Create a new array with exactly 5 elements
+        const newWord = Array(5).fill('');
+        // Copy existing word letters
+        state.word.forEach((l, i) => {
+          if (i < 5) newWord[i] = l;
+        });
+        // Set the new letter at the specified index
         newWord[index] = letter;
+        // Filter out empty strings and keep only filled letters
         const filteredWord = newWord.filter(l => l !== '');
         state.word = filteredWord.slice(0, 5);
         state.errors.word = undefined;
@@ -936,7 +941,7 @@
         // Update only the changed box immediately
         updateWordBox(index, letter);
         
-        // Move to next box
+        // Move to next box (only if not the last box)
         if (index < 4 && inputRefs[index + 1]) {
           setTimeout(() => {
             inputRefs[index + 1].focus();
@@ -947,8 +952,14 @@
         updateUIWithoutWordGrid();
       } else if (value === '') {
         // Clear current box
-        const newWord = [...state.word];
+        const newWord = Array(5).fill('');
+        // Copy existing word letters
+        state.word.forEach((l, i) => {
+          if (i < 5) newWord[i] = l;
+        });
+        // Clear the letter at the specified index
         newWord[index] = '';
+        // Filter out empty strings
         const filteredWord = newWord.filter(l => l !== '');
         state.word = filteredWord.slice(0, 5);
         state.errors.word = undefined;
